@@ -23,6 +23,18 @@ enum FileType { DIMACS, DOT };
 
 class Graph
 {
+
+private:
+	struct NodeData
+	{
+		string name; 
+		int x; 
+		int y; 
+		int radius;  
+		//color....
+		
+	}
+
 public:
 	
 	// Constructors, assignment operator, destructor
@@ -71,6 +83,7 @@ private:
 public:
 	// Iterators
 	typedef map<int, vector<int>>::const_iterator graph_iterator;
+	typedef map<int, vector<NodeData>>::const_iterator graph_iterator; 
 	graph_iterator begin() const;
 	graph_iterator end() const;
 };
