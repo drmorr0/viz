@@ -81,7 +81,8 @@ public:
 	
 private:
 	class Impl;
-	unique_ptr<Impl> theImpl;
+	//unique_ptr<Impl> theImpl;
+	Impl* theImpl;
 
 public:
 	// Iterators

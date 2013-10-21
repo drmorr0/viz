@@ -166,11 +166,9 @@ void Graph::Impl::readDIMACS(ifstream& input)
         lineStr >> type;
         if (type == 'a' || type == 'e')
         {
+			if (type == 'a') mType = SimpleDirected;
             lineStr >> node1 >> node2;
             addEdge(node1, node2);
-			if (type == 'e')
-				addEdge(node2, node1);
-			else mType = SimpleDirected;
         }
     }
 }

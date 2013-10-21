@@ -36,6 +36,10 @@ SubtreeBlock layoutTreeLevelHelper(const Graph& g, int rId, map<int, Point>& rel
 	// Loop through all the neighbors and recursively compute a layout for them
 	vector<SubtreeBlock> blocks;
 	int xOffsetChild = 0;
+	printf("Neighbors of %d:", rId);
+	for (int i = 0; i < rDeg; ++i)
+		printf(" %d ", g.neighbors(rId)[i]);
+	printf("\n");
 	for (int i = 0; i < rDeg; ++i)
 	{
 		blocks.push_back(layoutTreeLevelHelper(g, g.neighbors(rId)[i], relVertexPos, 
