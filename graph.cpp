@@ -43,6 +43,14 @@ Graph::Impl::Impl(const char* filename, FileType type, Graph* g) :
 	input.close();
 }
 
+// Clean up memory
+Graph::Impl::~Impl()
+{
+	// Delete any vertex data pointers that we've stored in the graph
+	for (auto i = mVertexData.begin(); i != mVertexData.end(); ++i)
+		delete i->second;
+}
+
 // Add a new vertex to the graph
 void Graph::Impl::addVertex(int u)
 {
@@ -120,6 +128,14 @@ int Graph::Impl::indegree(int u) const
 	if (!isDirected()) return degree(u);
 	auto iter = mRevAdjList.find(u);
 	return iter != mRevAdjList.end() ? iter->second.size() : 0;
+}
+
+// Return a pointer to the vertex data associated with vertex u
+Graph::VertexData* const Graph::Impl::vertexData(int u) const
+{
+	if (mVertexData.find(u) == mVertexData.end())
+		mVertexData[u] = new Graph::VertexData;
+	return mVertexData[u];
 }
 
 // Check to see if an edge exists
@@ -211,6 +227,7 @@ int Graph::outdegree(int u) const { return theImpl->outdegree(u); }
 int Graph::indegree(int u) const { return theImpl->indegree(u); }
 int Graph::getSource() const { return theImpl->getSource(); }
 int Graph::getSink() const { return theImpl->getSink(); }
+Graph::VertexData* const Graph::vertexData(int u) const { return theImpl->vertexData(u); }
 
 bool Graph::hasEdge(int u, int v) const { return theImpl->hasEdge(u, v); }
 

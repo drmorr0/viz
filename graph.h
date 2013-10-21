@@ -8,15 +8,19 @@
  * list.
  */
 
+#include "util.h"
+
 #include <vector>
 #include <memory>
+#include <string>
 #include <map>
-using std::vector;
-using std::unique_ptr;
-using std::map;
 
 namespace drm
 {
+using std::vector;
+using std::string;
+using std::unique_ptr;
+using std::map;
 
 enum GraphType { SimpleUndirected, SimpleDirected };
 enum FileType { DIMACS, DOT };
@@ -24,19 +28,16 @@ enum FileType { DIMACS, DOT };
 class Graph
 {
 
-private:
-	struct NodeData
-	{
-		string name; 
-		int x; 
-		int y; 
-		int radius;  
-		//color....
-		
-	}
-
 public:
 	
+	struct VertexData
+	{
+		string name; 
+		Point center;
+		int radius;  
+		//color....
+	};
+
 	// Constructors, assignment operator, destructor
 	Graph(GraphType type);
 	Graph(const char* filename, FileType type);
@@ -52,6 +53,7 @@ public:
 	void delEdge(int u, int v);
 	void setSource(int s);
 	void setSink(int t);
+	
 
 	// Global graph properties
 	int order() const;
@@ -68,6 +70,7 @@ public:
 	int indegree(int u) const;
 	int getSource() const;
 	int getSink() const;
+	VertexData* const vertexData(int u) const;
 
 	// Edge properties
 	bool hasEdge(int u, int v) const;
@@ -83,7 +86,6 @@ private:
 public:
 	// Iterators
 	typedef map<int, vector<int>>::const_iterator graph_iterator;
-	typedef map<int, vector<NodeData>>::const_iterator graph_iterator; 
 	graph_iterator begin() const;
 	graph_iterator end() const;
 };

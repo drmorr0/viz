@@ -32,6 +32,7 @@ public:
 	// Constructors, assignment operator, destructor
 	Impl(GraphType type, Graph* g);
 	Impl(const char* filename, FileType type, Graph* g);
+	~Impl();
 
 	void addVertex(int u);
 	void addEdge(int u, int v);
@@ -53,6 +54,7 @@ public:
 	int indegree(int u) const;
 	int getSource() const { return mSource; }
 	int getSink() const { return mSink; }
+	Graph::VertexData* const vertexData(int u) const;
 
 	bool hasEdge(int u, int v) const; 
 
@@ -67,6 +69,7 @@ private:
 	GraphType mType;
 	map<int, vector<int>> mAdjList;
 	map<int, vector<int>> mRevAdjList;
+	mutable map<int, VertexData*> mVertexData;
 
 	int mSource, mSink;
 	int mNumEdges;

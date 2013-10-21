@@ -4,7 +4,7 @@
 #    make sure the directory exists)
 # 3. Change $(EXEC) to be the name you want for your executable
 
-SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp
+SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp graph_layout.cpp
 CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0`
 LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0`
 EXEC = gviz
