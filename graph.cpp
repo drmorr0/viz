@@ -12,7 +12,10 @@
 #include "graph_utils.h"
 #include "util.h"
 
+#include <iostream>
 #include <sstream>
+
+using namespace std;
 
 namespace drm
 {
@@ -32,7 +35,7 @@ Graph::Impl::Impl(const char* filename, FileType type, Graph* g) :
 	Impl(SimpleUndirected, g)
 {
 	ifstream input(filename);
-	if (!input) throw ERROR << "Unable to open file " << filename << " for reading.";
+	if (!input) throw DRM_ERROR << "Unable to open file " << filename << " for reading.";
 
 	switch (type)
 	{

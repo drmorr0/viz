@@ -27,6 +27,9 @@ const double Infinity = std::numeric_limits<double>::max();
 const int MaxInt = std::numeric_limits<int>::max();
 
 /*** Error handling ***/
+namespace drm
+{
+
 class Error : public std::exception
 {
 public:
@@ -47,7 +50,9 @@ private:
 	stringstream _msg;
 };
 
-#define ERROR Error(__FILE__, __LINE__)
+#define DRM_ERROR drm::Error(__FILE__, __LINE__)
+
+};
 
 /*** Miscellaneous utility functions ***/
 template <typename ContainerT, typename U>

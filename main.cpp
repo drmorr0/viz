@@ -2,6 +2,8 @@
 // Entry point for the branch-and-bound/graph visualization software
 
 #include "main.h"
+#include "graph.h"
+#include "graph_layout.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -108,6 +110,20 @@ int main(int argc, char* argv[])
 {
 	opts options;
 	const char* filename = parseOpts(argc, argv, options);
+
+	drm::Graph testGraph(filename, drm::DIMACS);
+	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
+		testGraph.vertexData(i->first)->radius = 10;
+	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 10, 20);
+
+	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
+	{
+		auto data = testGraph.vertexData(i->first);
+		printf("Vertex %d: radius %d, center (%d, %d)\n", i->first, data->radius,
+				data->center.x, data->center.y);
+	}
+	exit(0);
+
 	auto app = Gtk::Application::create(argc, argv, "testing");
 	Gtk::Window window;
 	window.set_default_size(10000, 10000);
@@ -171,15 +187,14 @@ const char* parseOpts(int argc, char* argv[], opts& options)
 		}
 	}
 
-/*	if (optind == argc - 1)
+	if (optind == argc - 1)
 		return argv[optind];
 	else
 	{
 		fprintf(stderr, "No file specified\n");
 		usage(argv[0]);
 		exit(-1);
-	}*/
-	return nullptr;
+	}
 }
 
 void usage(const char* name)
