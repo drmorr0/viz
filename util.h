@@ -16,6 +16,11 @@ using std::string;
 using std::stringstream;
 using std::setprecision;
 
+struct Point
+{
+	int x, y;
+};
+
 /*** Constants and Types ***/
 const double Tolerance = 0.000000001;
 const double Infinity = std::numeric_limits<double>::max();
