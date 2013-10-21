@@ -1,4 +1,3 @@
-
 # To use this makefile, do the following:
 # 1. Update $(SRCS) to reflect the list of files you want to compile
 # 2. Set $(OBJDIR) to the directory in which you want the intermediate files to be placed (and 
@@ -65,3 +64,4 @@ test: $(TESTOBJS)
 	$(CC) $(STD) $(FORMAT) -o graph_test -gstabs -pg $(TESTOBJS)
 
 include $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.d))
+
