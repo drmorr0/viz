@@ -112,10 +112,9 @@ int main(int argc, char* argv[])
 	const char* filename = parseOpts(argc, argv, options);
 
 	drm::Graph testGraph(filename, drm::DIMACS);
-	testGraph.print();
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
-		testGraph.vertexData(i->first)->radius = 10;
-	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 20, 10);
+		testGraph.vertexData(i->first)->radius = 5;
+	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 50, 25);
 
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
 	{
