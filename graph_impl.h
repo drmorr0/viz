@@ -8,6 +8,8 @@
 
 #include "util.h"
 
+#include <json_spirit.h>
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -54,7 +56,7 @@ public:
 	int indegree(int u) const;
 	int getSource() const { return mSource; }
 	int getSink() const { return mSink; }
-	Graph::VertexData* const vertexData(int u) const;
+	Graph::VertexData* const vertexData(int u);
 
 	bool hasEdge(int u, int v) const; 
 
@@ -77,12 +79,12 @@ private:
 	// File input functions
 	void readDIMACS(ifstream& input);
 	void readDot(ifstream& input);
+	void readJsonTree(ifstream& input);
 
 public:
 	// Iterators
     graph_iterator begin() const { return mAdjList.cbegin(); }
     graph_iterator end() const { return mAdjList.cend(); }
-
 };
 
 

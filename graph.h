@@ -23,7 +23,8 @@ using std::unique_ptr;
 using std::map;
 
 enum GraphType { SimpleUndirected, SimpleDirected };
-enum FileType { DIMACS, DOT };
+enum FileType { DIMACS, DOT, JSON_Tree };
+enum BranchDir { Up, Down };
 
 class Graph
 {
@@ -32,9 +33,18 @@ public:
 	
 	struct VertexData
 	{
-		string name; 
+		// Information about the vertex
+		string name;
+		int genTime, expTime;
+		int branchVar;
+		BranchDir branchDir;
+		double lb, ub;
+		string info;
+
+		// Positioning information
 		Point center;
-		int radius;  
+		int radius;
+
 		//color....
 	};
 
@@ -53,7 +63,6 @@ public:
 	void delEdge(int u, int v);
 	void setSource(int s);
 	void setSink(int t);
-	
 
 	// Global graph properties
 	int order() const;
@@ -70,7 +79,7 @@ public:
 	int indegree(int u) const;
 	int getSource() const;
 	int getSink() const;
-	VertexData* const vertexData(int u) const;
+	VertexData* const vertexData(int u);
 
 	// Edge properties
 	bool hasEdge(int u, int v) const;
