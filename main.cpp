@@ -113,8 +113,8 @@ int main(int argc, char* argv[])
 
 	drm::Graph testGraph(filename, drm::DIMACS);
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
-		testGraph.vertexData(i->first)->radius = 10;
-	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 10, 20);
+		testGraph.vertexData(i->first)->radius = 5;
+	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 50, 25);
 
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
 	{

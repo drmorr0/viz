@@ -16,7 +16,7 @@ CC = g++
 STD = -std=c++0x
 FORMAT = -fno-pretty-templates
 WARNINGS = -Wempty-body -Wall -Wno-sign-compare
-DEBUGFLAGS = -gstabs -pg
+DEBUGFLAGS = -g -pg
 OPTFLAGS = -O2
 OBJDIR = obj
 OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
@@ -61,7 +61,7 @@ clean:
 TESTSRC = graph_test.cpp graph.cpp graph_utils.cpp graph_order.cpp
 TESTOBJS = $(addprefix $(OBJDIR)/,$(TESTSRC:.cpp=.debug))
 test: $(TESTOBJS)
-	$(CC) $(STD) $(FORMAT) -o graph_test -gstabs -pg $(TESTOBJS)
+	$(CC) $(STD) $(FORMAT) -o graph_test -pg $(TESTOBJS)
 
 include $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.d))
 
