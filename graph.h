@@ -48,9 +48,10 @@ public:
 		//color....
 	};
 
+	typedef deep_ptr<VertexData, false> VertexDataPtr;
+
 	// Constructors, assignment operator, destructor
-	Graph(GraphType type);
-	Graph(const char* filename, FileType type);
+	Graph(GraphType type = SimpleUndirected);
 	Graph(const Graph& g);
 	Graph& operator=(Graph g);
 	void swap(Graph& g) { using std::swap; swap(theImpl, g.theImpl); }
@@ -63,6 +64,7 @@ public:
 	void delEdge(int u, int v);
 	void setSource(int s);
 	void setSink(int t);
+	void setType(GraphType t);
 
 	// Global graph properties
 	int order() const;
@@ -77,17 +79,13 @@ public:
 	int degree(int u) const;
 	int outdegree(int u) const;
 	int indegree(int u) const;
-	int getSource() const;
-	int getSink() const;
-	VertexData* const vertexData(int u);
+	int source() const;
+	int sink() const;
+	VertexDataPtr const vertexData(int u);
 
 	// Edge properties
 	bool hasEdge(int u, int v) const;
 
-	// Output
-	void print() const;
-	void printShort() const;
-	
 private:
 	class Impl;
 	//unique_ptr<Impl> theImpl;

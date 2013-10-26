@@ -4,7 +4,7 @@
 #    make sure the directory exists)
 # 3. Change $(EXEC) to be the name you want for your executable
 
-SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp graph_layout.cpp
+SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp graph_layout.cpp graph_io.cpp
 CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0`
 LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0`
 EXEC = gviz
@@ -16,7 +16,7 @@ CC = g++
 STD = -std=c++0x
 FORMAT = -fno-pretty-templates
 WARNINGS = -Wempty-body -Wall -Wno-sign-compare
-DEBUGFLAGS = -g -pg
+DEBUGFLAGS = -gstabs -pg
 OPTFLAGS = -O2
 OBJDIR = obj
 OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))

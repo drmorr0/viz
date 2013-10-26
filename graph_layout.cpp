@@ -20,10 +20,10 @@ struct SubtreeBlock
 	int width, rootX;
 };
 
-SubtreeBlock computeSubtreeLayout(const Graph& g, int rId, map<int, Point>& relVertexPos, 
+SubtreeBlock computeSubtreeLayout(Graph& g, int rId, map<int, Point>& relVertexPos, 
 		int vSpace, int hSpace)
 {
-	Graph::VertexData* rData = g.vertexData(rId);
+	auto rData = g.vertexData(rId);
 	int rDeg = g.outdegree(rId);
 
 	// Base case -- we have no children, so our span is just the width of the single node
@@ -55,14 +55,14 @@ SubtreeBlock computeSubtreeLayout(const Graph& g, int rId, map<int, Point>& relV
 	return { width, rootX };
 }
 
-void layoutTreeLevel(const Graph& g, const Point& rootPos, int vSpace, int hSpace)
+void layoutTreeLevel(Graph& g, const Point& rootPos, int vSpace, int hSpace)
 {
 	// Initialize a map of vertex positions relative to the vertex's parent; i.e.,
 	// relVertexPos[i].x is the position of vertex i relative to the parent of i
 	map<int, Point> relVertexPos;
 
 	// Initialize the root of the tree
-	Graph::VertexData* rootData = g.vertexData(0);
+	auto rootData = g.vertexData(0);
 	rootData->center.x = rootPos.x;
 	rootData->center.y = rootPos.y;
 
@@ -74,11 +74,11 @@ void layoutTreeLevel(const Graph& g, const Point& rootPos, int vSpace, int hSpac
 	while (!queue.empty())
 	{
 		int currNode = queue.front(); queue.pop_front();
-		Graph::VertexData* currData = g.vertexData(currNode);
+		auto currData = g.vertexData(currNode);
 		for (int i = 0; i < g.outdegree(currNode); ++i)
 		{
 			int child = g.neighbors(currNode)[i];
-			Graph::VertexData* childData = g.vertexData(child);
+			auto childData = g.vertexData(child);
 			childData->center.x = currData->center.x + relVertexPos[child].x;
 			childData->center.y = currData->center.y + relVertexPos[child].y;
 			queue.push_back(child);

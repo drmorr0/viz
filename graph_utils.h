@@ -4,6 +4,8 @@
  * Utility functions for the graph class
  */
 
+#include <vector>
+
 namespace drm
 {
 
@@ -12,8 +14,8 @@ class Graph;
 namespace GraphUtils
 {
 	double density(const Graph& g);
-	bool testIndSet(const Graph& g, const vector<int>& set);
-	bool testClique(const Graph& g, const vector<int>& set);
+	bool testIndSet(const Graph& g, const std::vector<int>& set);
+	bool testClique(const Graph& g, const std::vector<int>& set);
 	Graph complement(const Graph& g);
 }; // namespace GraphUtils
 
