@@ -85,16 +85,18 @@ void remove(ContainerT& con, const U& el)
 
 /*** Pointers and stuff ***/
 
-template <typename T, bool orig = false>
+template <typename T, bool Owner = false>
 class deep_ptr
 {
-	friend class deep_ptr<T, false>;
-	friend class deep_ptr<T, true>;
+	template <typename U, bool O> friend class deep_ptr;
 public:
 	deep_ptr(T* obj = nullptr) : mPointer(obj) { }
+
+	// TODO I don't know why I can't template out the boolean here, but it causes major
+	// memory leak problems
 	deep_ptr(const deep_ptr<T, true>& obj) 
 	{
-		if (orig)
+		if (Owner)
 		{
 			if (obj.mPointer) mPointer = new T(*obj.mPointer);
 			else mPointer = nullptr;
@@ -103,17 +105,15 @@ public:
 	}
 	deep_ptr(const deep_ptr<T, false>& obj)
 	{
-		if (orig)
+		if (Owner)
 		{
 			if (obj.mPointer) mPointer = new T(*obj.mPointer);
 			else mPointer = nullptr;
 		}
 		else mPointer = obj.mPointer;
 	}
-	~deep_ptr() 
-	{ 
-		if (orig) delete mPointer; 
-	}
+
+	~deep_ptr() { if (Owner) delete mPointer; }
 	T& operator*() const { return *mPointer; }
 	T* operator->() const { return mPointer; }
 

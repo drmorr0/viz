@@ -16,7 +16,7 @@ CC = g++
 STD = -std=c++0x
 FORMAT = -fno-pretty-templates
 WARNINGS = -Wempty-body -Wall -Wno-sign-compare
-DEBUGFLAGS = -gstabs -pg
+DEBUGFLAGS = -g -pg
 OPTFLAGS = -O2
 OBJDIR = obj
 OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
