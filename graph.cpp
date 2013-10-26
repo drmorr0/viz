@@ -21,38 +21,12 @@ namespace drm
 {
 
 // Create an empty graph
-Graph::Impl::Impl(GraphType type, Graph* g) :
-	theGraph(g),
+Graph::Impl::Impl(GraphType type) :
 	mType(type),
 	mSource(-1),
 	mSink(-1), 
 	mNumEdges(0)
 {
-}
-
-// Read in a graph from a file.  Currently-supported filetypes are DIMACS and GraphViz DOT (TODO)
-Graph::Impl::Impl(const char* filename, FileType type, Graph* g) :
-	Impl(SimpleUndirected, g)
-{
-	ifstream input(filename);
-	if (!input) throw DRM_ERROR << "Unable to open file " << filename << " for reading.";
-
-	switch (type)
-	{
-		case DIMACS: 	readDIMACS(input); break;
-		case DOT:    	readDot(input); break;
-		case JSON_Tree:	readJsonTree(input); break;
-	}
-
-	input.close();
-}
-
-// Clean up memory
-Graph::Impl::~Impl()
-{
-	// Delete any vertex data pointers that we've stored in the graph
-	for (auto i = mVertexData.begin(); i != mVertexData.end(); ++i)
-		delete i->second;
 }
 
 // Add a new vertex to the graph
@@ -96,6 +70,7 @@ void Graph::Impl::delVertex(int u)
 	}
 
 	mAdjList.erase(u);
+	mVertexData.erase(u);
 }
 
 // Delete an edge from the graph
@@ -135,11 +110,11 @@ int Graph::Impl::indegree(int u) const
 }
 
 // Return a pointer to the vertex data associated with vertex u
-Graph::VertexData* const Graph::Impl::vertexData(int u) 
+Graph::VertexDataPtr const Graph::Impl::vertexData(int u) 
 {
 	if (mAdjList.count(u) == 0) addVertex(u);
 	if (mVertexData.count(u) == 0)
-		mVertexData[u] = new Graph::VertexData;
+		mVertexData[u] = VertexDataPtr(new Graph::VertexData);
 	return mVertexData[u];
 }
 
@@ -150,153 +125,11 @@ bool Graph::Impl::hasEdge(int u, int v) const
 	return (iter != mAdjList.end() && contains(iter->second, v));
 }
 
-// Read in a graph from a DIMACS .col file
-void Graph::Impl::readDIMACS(ifstream& input)
-{
-    string nextLine;
-
-    // Read from file
-    while (input.good())
-    {
-        getline(input, nextLine);
-        if (nextLine.empty()) continue;
-
-        int node1, node2;
-        char type;
-
-        stringstream lineStr(nextLine);
-        lineStr >> type;
-        if (type == 'a' || type == 'e')
-        {
-			if (type == 'a') mType = SimpleDirected;
-            lineStr >> node1 >> node2;
-            addEdge(node1, node2);
-        }
-    }
-}
-
-void Graph::Impl::readDot(ifstream& input)
-{
-	// TODO
-}
-
-void Graph::Impl::readJsonTree(ifstream& input)
-{
-	using namespace json_spirit;
-	mType = SimpleDirected;
-
-	string nextLine;
-
-	while (input.good())
-	{
-		getline(input, nextLine);
-		if (nextLine.empty()) continue;
-
-		Value val;
-		read(nextLine, val);
-
-		if (val.type() != json_spirit::object_type)
-			throw DRM_ERROR << "Invalid format string: \n    " << nextLine;
-
-		Object obj val.get_obj();
-
-		int nId = -1;
-		int child = -1;
-		double startTime, endTime;
-		if (obj.size() == 0)
-		   throw DRM_ERROR << "Invalid format string: \n    " << nextLine;
-		else if (obj[0].name_ == "node_id") 
-			nId = obj[i].value_.get_int();
-		else if (obj[0].name_ == "start_time") 
-			startTime = obj[i].value_.get_int();
-		else if (obj[0].name_ == "end_time")
-			endTime = obj[i].value_.get_int();
-		else throw DRM_ERROR << "First parameter is not valid: \n    " << nextLine;
-
-		VertexData data;
-
-		for (int i = 1; i < obj.size(); ++i)
-		{
-			string name = obj[i].name_;
-			Value val = obj[i].value_;
-
-			if (name == "explored_at") 
-				data->expTime = val.get_int();	
-			else if (name == "branching_var") 
-				data->branchVar = val.get_int();
-			else if (name == "lower_bound") 
-				data->lb = val.get_real();
-			else if (name == "upper_bound") 
-				data->ub = val.get_real();
-			else if (name == "estimate") { /* TODO */ }
-			else if (name == "contour") { /* TODO */ }
-			else if (name == "child") 
-			{
-				child = val.get_int();
-				data->genTime = vertexData(nId)->expTime;
-				if (data->genTime == -1)
-					throw ERROR << "Parent was not explored before child:\n    " << nextLine;
-			}
-			else if (name == "branch_dir") 
-			{
-				if (val.get_int() > 0) data->branchDir = Up;
-				else if (val.get_int() < 0) data->branchDir = Down;
-				else throw ERROR << "Invalid branch direction:\n    " << nextLine;
-			}
-			else if (name == "obj_value") { }
-
-			else if (name == "clocks_per_sec") { }
-			else if (name == "num_vars") { } 
-			else if (name == "num_int_vars") { }
-			else if (name == "num_bin_vars") { }
-			else if (name == "total_nodes") { }
-		}
-
-		if (nId != -1)
-		{
-			if (child != -1) 
-			{
-				addEdge(nId, child);
-				vertexData(child)->genTime = data->genTime;
-				vertexData(child)->branchDir = data->branchDir;
-			}
-			else
-			{
-				vertexData(nId)->expTime = data->expTime;
-				vertexData(nId)->branchVar = data->branchVar;
-				vertexData(nId)->lb = data->lb;
-				vertexData(nId)->ub = data->ub;
-			}
-		}
-	}
-}
-
-/* Printing functions */
-void Graph::Impl::print() const
-{
-    for (auto i = mAdjList.begin(); i != mAdjList.end(); ++i)
-	{
-        printf("%d: ", i->first);
-        for (int j = 0; j < i->second.size(); ++j) 
-            printf("%d ", i->second[j]);
-        printf("\n");
-    }
-}
-
-void Graph::Impl::printShort() const
-{
-    printf("Number of nodes: %d\n", order());
-    printf("Number of arcs: %d\n", size());
-    printf("Density: %0.2f\n", GraphUtils::density(*theGraph));
-}
-
-
 /**********************************************************/
 /* Handle functions redirecting from Graph to Graph::Impl */
 /**********************************************************/
 
-Graph::Graph(GraphType type) : theImpl(new Impl(type, this)) { }
-Graph::Graph(const char* filename, FileType type) : theImpl(new Impl(filename, type, this)) { }
+Graph::Graph(GraphType type) : theImpl(new Impl(type)) { }
 Graph::Graph(const Graph& g) : theImpl(new Impl(*g.theImpl)) { }
 Graph& Graph::operator=(Graph rhs) { swap(rhs); return *this; }
 Graph::~Graph() { }		// Necessary so the unique_ptr destructor can be instantiated properly
@@ -307,6 +140,7 @@ void Graph::delVertex(int u) { theImpl->delVertex(u); }
 void Graph::delEdge(int u, int v) { theImpl->delEdge(u, v); }
 void Graph::setSource(int s) { theImpl->setSource(s); }
 void Graph::setSink(int t) { theImpl->setSink(t); }
+void Graph::setType(GraphType t) { theImpl->setType(t); }
 
 int Graph::order() const { return theImpl->order(); }
 int Graph::size() const { return theImpl->size(); }
@@ -319,14 +153,11 @@ vector<int> Graph::neighbors(int u) const { return theImpl->neighbors(u); }
 int Graph::degree(int u) const { return theImpl->degree(u); }
 int Graph::outdegree(int u) const { return theImpl->outdegree(u); }
 int Graph::indegree(int u) const { return theImpl->indegree(u); }
-int Graph::getSource() const { return theImpl->getSource(); }
-int Graph::getSink() const { return theImpl->getSink(); }
-Graph::VertexData* const Graph::vertexData(int u) { return theImpl->vertexData(u); }
+int Graph::source() const { return theImpl->source(); }
+int Graph::sink() const { return theImpl->sink(); }
+Graph::VertexDataPtr const Graph::vertexData(int u) { return theImpl->vertexData(u); }
 
 bool Graph::hasEdge(int u, int v) const { return theImpl->hasEdge(u, v); }
-
-void Graph::print() const { theImpl->print(); }
-void Graph::printShort() const { theImpl->printShort(); }
 
 Graph::graph_iterator Graph::begin() const { return theImpl->begin(); }
 Graph::graph_iterator Graph::end() const { return theImpl->end(); }

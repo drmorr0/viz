@@ -3,6 +3,8 @@
 
 #include "graph.h"
 
+using namespace std;
+
 namespace drm
 {
 

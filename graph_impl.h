@@ -32,9 +32,7 @@ class Graph::Impl
 public:
 	
 	// Constructors, assignment operator, destructor
-	Impl(GraphType type, Graph* g);
-	Impl(const char* filename, FileType type, Graph* g);
-	~Impl();
+	Impl(GraphType type);
 
 	void addVertex(int u);
 	void addEdge(int u, int v);
@@ -42,6 +40,7 @@ public:
 	void delEdge(int u, int v);
 	void setSource(int s) { mSource = s; }
 	void setSink(int t) { mSink = t; }
+	void setType(GraphType t) { mType = t; }
 
 	int order() const { return mAdjList.size(); }
 	int size() const { return mNumEdges; }
@@ -54,24 +53,18 @@ public:
 	int degree(int u) const; 
 	int outdegree(int u) const { return degree(u); }
 	int indegree(int u) const;
-	int getSource() const { return mSource; }
-	int getSink() const { return mSink; }
-	Graph::VertexData* const vertexData(int u);
+	int source() const { return mSource; }
+	int sink() const { return mSink; }
+	Graph::VertexDataPtr const vertexData(int u);
 
 	bool hasEdge(int u, int v) const; 
 
-	void print() const;
-	void printShort() const;
-	
 private:
-	// Pointer to parent class
-	Graph* theGraph;
-
 	// Graph structure
 	GraphType mType;
 	map<int, vector<int>> mAdjList;
 	map<int, vector<int>> mRevAdjList;
-	mutable map<int, VertexData*> mVertexData;
+	map<int, VertexDataPtr> mVertexData;
 
 	int mSource, mSink;
 	int mNumEdges;
