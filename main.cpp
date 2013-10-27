@@ -118,13 +118,26 @@ int main(int argc, char* argv[])
 		testGraph.vertexData(i->first)->radius = 5;
 	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 50, 25);
 
+	drm::Graph* graph2 = new drm::Graph(testGraph);
+	for (auto i = graph2->begin(); i != graph2->end(); ++i)
+		graph2->vertexData(i->first)->radius = 1;
+
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
 	{
 		auto data = testGraph.vertexData(i->first);
 		printf("Vertex %d: radius %d, center (%d, %d)\n", i->first, data->radius,
 				data->center.x, data->center.y);
 	}
-	exit(0);
+	for (auto i = graph2->begin(); i != graph2->end(); ++i)
+	{
+		auto data = graph2->vertexData(i->first);
+		printf("Vertex %d: radius %d, center (%d, %d)\n", i->first, data->radius,
+				data->center.x, data->center.y);
+	}
+
+	delete graph2;
+
+	return 0;
 
 	auto app = Gtk::Application::create(argc, argv, "testing");
 	Gtk::Window window;

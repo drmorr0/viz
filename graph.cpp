@@ -114,7 +114,7 @@ Graph::VertexDataPtr const Graph::Impl::vertexData(int u)
 {
 	if (mAdjList.count(u) == 0) addVertex(u);
 	if (mVertexData.count(u) == 0)
-		mVertexData.insert({u, deep_ptr<Graph::VertexData, true>(new Graph::VertexData)});
+		mVertexData[u].set(new Graph::VertexData);
 	return mVertexData[u];
 }
 
@@ -132,7 +132,7 @@ bool Graph::Impl::hasEdge(int u, int v) const
 Graph::Graph(GraphType type) : theImpl(new Impl(type)) { }
 Graph::Graph(const Graph& g) : theImpl(new Impl(*g.theImpl)) { }
 Graph& Graph::operator=(Graph rhs) { swap(rhs); return *this; }
-Graph::~Graph() { }		// Necessary so the unique_ptr destructor can be instantiated properly
+Graph::~Graph() { if (theImpl) delete theImpl; }		
 
 void Graph::addVertex(int u) { theImpl->addVertex(u); }
 void Graph::addEdge(int u, int v) { theImpl->addEdge(u, v); }

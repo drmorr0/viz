@@ -31,7 +31,6 @@ class Graph::Impl
 {
 public:
 	
-	// Constructors, assignment operator, destructor
 	Impl(GraphType type);
 
 	void addVertex(int u);
