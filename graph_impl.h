@@ -8,8 +8,6 @@
 
 #include "util.h"
 
-#include <json_spirit.h>
-
 #include <vector>
 #include <string>
 #include <fstream>
