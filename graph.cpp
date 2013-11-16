@@ -29,6 +29,13 @@ Graph::Impl::Impl(GraphType type) :
 {
 }
 
+// Clean up vertex data
+Graph::Impl::~Impl()
+{
+    for (auto i = mVertexData.begin(); i != mVertexData.end(); ++i)
+        delete i->second;
+}
+
 // Add a new vertex to the graph
 void Graph::Impl::addVertex(int u)
 {
@@ -110,11 +117,11 @@ int Graph::Impl::indegree(int u) const
 }
 
 // Return a pointer to the vertex data associated with vertex u
-Graph::VertexDataPtr const Graph::Impl::vertexData(int u) 
+Graph::VertexData* const Graph::Impl::vertexData(int u) 
 {
 	if (mAdjList.count(u) == 0) addVertex(u);
 	if (mVertexData.count(u) == 0)
-		mVertexData.insert({u, VertexDataPtr(new Graph::VertexData)});
+		mVertexData[u] = new VertexData;
 	return mVertexData[u];
 }
 
@@ -125,6 +132,19 @@ bool Graph::Impl::hasEdge(int u, int v) const
 	return (iter != mAdjList.end() && contains(iter->second, v));
 }
 
+// Perform a deep copy of vertex data
+Graph::Impl::Impl(const Graph::Impl& other) :
+    mType(other.mType),
+    mAdjList(other.mAdjList),
+    mRevAdjList(other.mRevAdjList),
+    mSource(other.mSource),
+    mSink(other.mSink),
+    mNumEdges(other.mNumEdges)
+{
+    for (auto i = other.mVertexData.begin(); i != other.mVertexData.end(); ++i)
+        mVertexData.insert({ i->first, i->second->clone() });
+}
+
 /**********************************************************/
 /* Handle functions redirecting from Graph to Graph::Impl */
 /**********************************************************/
@@ -132,7 +152,7 @@ bool Graph::Impl::hasEdge(int u, int v) const
 Graph::Graph(GraphType type) : theImpl(new Impl(type)) { }
 Graph::Graph(const Graph& g) : theImpl(new Impl(*g.theImpl)) { }
 Graph& Graph::operator=(Graph rhs) { swap(rhs); return *this; }
-Graph::~Graph() { }		// Necessary so the unique_ptr destructor can be instantiated properly
+Graph::~Graph() { if (theImpl) delete theImpl; }		
 
 void Graph::addVertex(int u) { theImpl->addVertex(u); }
 void Graph::addEdge(int u, int v) { theImpl->addEdge(u, v); }
@@ -155,7 +175,7 @@ int Graph::outdegree(int u) const { return theImpl->outdegree(u); }
 int Graph::indegree(int u) const { return theImpl->indegree(u); }
 int Graph::source() const { return theImpl->source(); }
 int Graph::sink() const { return theImpl->sink(); }
-Graph::VertexDataPtr const Graph::vertexData(int u) { return theImpl->vertexData(u); }
+Graph::VertexData* const Graph::vertexData(int u) { return theImpl->vertexData(u); }
 
 bool Graph::hasEdge(int u, int v) const { return theImpl->hasEdge(u, v); }
 

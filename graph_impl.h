@@ -8,8 +8,6 @@
 
 #include "util.h"
 
-#include <json_spirit.h>
-
 #include <vector>
 #include <string>
 #include <fstream>
@@ -31,8 +29,8 @@ class Graph::Impl
 {
 public:
 	
-	// Constructors, assignment operator, destructor
 	Impl(GraphType type);
+	~Impl();
 
 	void addVertex(int u);
 	void addEdge(int u, int v);
@@ -55,29 +53,33 @@ public:
 	int indegree(int u) const;
 	int source() const { return mSource; }
 	int sink() const { return mSink; }
-	Graph::VertexDataPtr const vertexData(int u);
+	VertexData* const vertexData(int u);
 
 	bool hasEdge(int u, int v) const; 
 
 private:
+
+	// Should never assign Graph::Impl
+	Impl& operator=(const Impl& other);
+
 	// Graph structure
 	GraphType mType;
 	map<int, vector<int>> mAdjList;
 	map<int, vector<int>> mRevAdjList;
-	map<int, VertexDataPtr> mVertexData;
+	map<int, VertexData*> mVertexData;
 
 	int mSource, mSink;
 	int mNumEdges;
 
-	// File input functions
-	void readDIMACS(ifstream& input);
-	void readDot(ifstream& input);
-	void readJsonTree(ifstream& input);
+	// NOTE: If more members added, make sure to update copy constructor
 
 public:
 	// Iterators
     graph_iterator begin() const { return mAdjList.cbegin(); }
     graph_iterator end() const { return mAdjList.cend(); }
+
+	// Copy constructor -- update when new members added
+	Impl(const Impl& other);
 };
 
 

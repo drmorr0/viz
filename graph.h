@@ -48,9 +48,9 @@ public:
 		int radius;
 
 		//color....
+		virtual VertexData* clone() { return new VertexData(*this); }
+		virtual ~VertexData() { }
 	};
-
-	typedef deep_ptr<VertexData> VertexDataPtr;
 
 	// Constructors, assignment operator, destructor
 	Graph(GraphType type = SimpleUndirected);
@@ -83,7 +83,7 @@ public:
 	int indegree(int u) const;
 	int source() const;
 	int sink() const;
-	VertexDataPtr const vertexData(int u);
+	VertexData* const vertexData(int u);
 
 	// Edge properties
 	bool hasEdge(int u, int v) const;

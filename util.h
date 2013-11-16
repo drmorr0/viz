@@ -83,24 +83,6 @@ void remove(ContainerT& con, const U& el)
 	if (iter != con.end()) con.erase(iter);
 }
 
-/*** Pointers and stuff ***/
-
-template <typename T>
-class deep_ptr
-{
-public:
-	deep_ptr() : mPointer(nullptr) { }
-	deep_ptr(T* obj) : mPointer(obj) { }
-	deep_ptr(const deep_ptr<T>& obj) : mPointer(obj.mPointer ? new T(*(obj.mPointer)) : nullptr) { }
-	~deep_ptr() { if (mPointer) delete mPointer; }
-	T& operator*() const { return *mPointer; }
-	T* operator->() const { return mPointer; }
-
-private:
-	T& operator=(const T& rhs);
-	T* mPointer;
-};
-
 #endif // UTIL_H
 
 
