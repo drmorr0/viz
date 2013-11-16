@@ -112,8 +112,7 @@ int main(int argc, char* argv[])
 	opts options;
 	const char* filename = parseOpts(argc, argv, options);
 
-	drm::Graph testGraph;
-   	readDIMACS(filename, testGraph);
+	drm::Graph testGraph = drm::readJsonTree(filename);
 	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
 		testGraph.vertexData(i->first)->radius = 5;
 	drm::GraphUtils::layoutTreeLevel(testGraph, {0, 0}, 50, 25);

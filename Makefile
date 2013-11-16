@@ -6,7 +6,7 @@
 
 SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp graph_layout.cpp graph_io.cpp
 CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0`
-LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0`
+LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0` -ljson_spirit
 EXEC = gviz
 
 # You can leave this stuff alone for the most part; it sets the right C++ standard, tells the

@@ -12,7 +12,7 @@ namespace drm
 class Graph;
 
 void readDIMACS(const char* filename, Graph& g);
-void readJsonTree(const char* filename, Graph& g);
+Graph readJsonTree(const char* filename);
 void print(const Graph& g);
 void printShort(const Graph& g);
 

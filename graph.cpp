@@ -114,7 +114,7 @@ Graph::VertexDataPtr const Graph::Impl::vertexData(int u)
 {
 	if (mAdjList.count(u) == 0) addVertex(u);
 	if (mVertexData.count(u) == 0)
-		mVertexData[u] = VertexDataPtr(new Graph::VertexData);
+		mVertexData.insert({u, VertexDataPtr(new Graph::VertexData)});
 	return mVertexData[u];
 }
 

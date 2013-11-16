@@ -92,7 +92,7 @@ public:
 	deep_ptr() : mPointer(nullptr) { }
 	deep_ptr(T* obj) : mPointer(obj) { }
 	deep_ptr(const deep_ptr<T>& obj) : mPointer(obj.mPointer ? new T(*(obj.mPointer)) : nullptr) { }
-	~deep_ptr() { delete mPointer; }
+	~deep_ptr() { if (mPointer) delete mPointer; }
 	T& operator*() const { return *mPointer; }
 	T* operator->() const { return mPointer; }
 

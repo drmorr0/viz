@@ -24,7 +24,7 @@ using std::map;
 
 enum GraphType { SimpleUndirected, SimpleDirected };
 enum FileType { DIMACS, DOT, JSON_Tree };
-enum BranchDir { Up, Down };
+enum BranchDir { Down = -1, Up = 1 };
 
 class Graph
 {
@@ -35,10 +35,12 @@ public:
 	{
 		// Information about the vertex
 		string name;
-		int genTime, expTime;
-		int branchVar;
+		int genTime, expTime, pruneTime;
+		string branchVar;
 		BranchDir branchDir;
 		double lb, ub;
+		int contour;
+		double estimate;
 		string info;
 
 		// Positioning information
