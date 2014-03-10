@@ -4,9 +4,9 @@
 #    make sure the directory exists)
 # 3. Change $(EXEC) to be the name you want for your executable
 
-SRCS = main.cpp graph.cpp graph_utils.cpp graph_order.cpp graph_layout.cpp graph_io.cpp
-CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0`
-LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0` -ljson_spirit
+SRCS = main.cpp viz_io.cpp
+CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0` -I../graph-lib
+LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0` -ljson_spirit -L../graph-lib 
 EXEC = gviz
 
 # You can leave this stuff alone for the most part; it sets the right C++ standard, tells the
@@ -47,12 +47,12 @@ debug: $(EXECD)
 
 $(EXEC): $(OBJS)
 	@echo; echo "Linking $(EXEC)"
-	@$(CC) $(STD) $(FORMAT) -o $(EXEC) $(OPTFLAGS) $(OBJS) $(LDFLAGS)
+	@$(CC) $(STD) $(FORMAT) -o $(EXEC) $(OPTFLAGS) $(OBJS) $(LDFLAGS) -lgraph
 	@echo "Done."
 
 $(EXECD): $(DOBJS)
 	@echo; echo "Linking debug version $(EXECD)"
-	@$(CC) $(STD) $(FORMAT) -o $(EXECD) $(DEBUGFLAGS) $(DOBJS) $(LDFLAGS)
+	@$(CC) $(STD) $(FORMAT) -o $(EXECD) $(DEBUGFLAGS) $(DOBJS) $(LDFLAGS) -lgraph_d
 	@echo "Done."
 
 clean:

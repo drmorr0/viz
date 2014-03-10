@@ -16,19 +16,12 @@ using std::string;
 using std::stringstream;
 using std::setprecision;
 
-struct Point
-{
-	int x, y;
-};
-
 /*** Constants and Types ***/
 const double Tolerance = 0.000000001;
 const double Infinity = std::numeric_limits<double>::max();
 const int MaxInt = std::numeric_limits<int>::max();
 
 /*** Error handling ***/
-namespace drm
-{
 
 class Error : public std::exception
 {
@@ -50,9 +43,7 @@ private:
 	stringstream _msg;
 };
 
-#define DRM_ERROR drm::Error(__FILE__, __LINE__)
-
-};
+#define ERROR Error(__FILE__, __LINE__)
 
 /*** Miscellaneous utility functions ***/
 template <typename ContainerT, typename U>

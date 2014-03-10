@@ -2,9 +2,10 @@
 // Entry point for the branch-and-bound/graph visualization software
 
 #include "main.h"
-#include "graph.h"
-#include "graph_io.h"
-#include "graph_layout.h"
+#include "viz_io.h"
+
+#include <graph.h>
+#include <graph_layout.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -15,6 +16,7 @@
 #include <cairomm/surface.h>
 #include <iostream>
 using namespace std;
+using graph::Graph;
 
 class GraphCanvas : public Gtk::DrawingArea
 {
@@ -112,10 +114,10 @@ int main(int argc, char* argv[])
 	opts options;
 	const char* filename = parseOpts(argc, argv, options);
 
-	drm::Graph* testGraph = new drm::Graph(drm::readJsonTree(filename));
+	Graph* testGraph = new Graph(readJsonTree(filename));
 	for (auto i = testGraph->begin(); i != testGraph->end(); ++i)
 		testGraph->vertexData(i->first)->radius = 5;
-	drm::GraphUtils::layoutTreeLevel(*testGraph, {0, 0}, 50, 25);
+	graph::layoutTreeLevel(*testGraph, {0, 0}, 50, 25);
 
 	for (auto i = testGraph->begin(); i != testGraph->end(); ++i)
 	{
