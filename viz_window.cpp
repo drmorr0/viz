@@ -15,8 +15,7 @@ VizWindow::VizWindow(Graph* graph, Gtk::WindowType wt) :
 }
 
 GraphCanvas::GraphCanvas(Graph* graph) :
-	mCanvasX(-400),
-	mCanvasY(-20),
+	mCanvPos(-400, -20),
 	mZoom(1.0),
 	mGraph(graph)
 {
@@ -29,28 +28,29 @@ bool GraphCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	{
 		auto nodeData = mGraph->vertexData(node->first);
 
-		double nodeCanvasX = mCanvasX + nodeData->center.x * mZoom;
-		double nodeCanvasY = mCanvasY + nodeData->center.y * mZoom;
-		double nodeCanvasRadius = nodeData->radius * mZoom;
-		cr->arc(nodeCanvasX, nodeCanvasY, nodeCanvasRadius, 0, 2 * M_PI);
+		// Translate from the position in graph-embedding space to canvas space
+		Vector2D nodePos(nodeData->x, nodeData->y);
+		Vector2D nodeCanvPos = mCanvPos + mZoom * nodePos;
+		double nodeCanvRadius = nodeData->radius * mZoom;
+
+		// Draw a circle for the node
+		cr->arc(nodeCanvPos.x, nodeCanvPos.y, nodeCanvRadius, 0, 2 * M_PI);
 		cr->stroke();
 
 		for (auto child = node->second.begin(); child != node->second.end(); ++child)
 		{
 			auto childData = mGraph->vertexData(*child);
-			double childCanvasX = mCanvasX + childData->center.x * mZoom;
-			double childCanvasY = mCanvasY + childData->center.y * mZoom;
-			double childCanvasRadius = childData->radius * mZoom;
+			Vector2D childPos(childData->x, childData->y);
+			Vector2D childCanvPos = mCanvPos + mZoom * childPos;
+			double childCanvRadius = childData->radius * mZoom;
 			
-			double connectorX = childCanvasX - nodeCanvasX;
-			double connectorY = childCanvasY - nodeCanvasY;
-			double length = sqrt(connectorX * connectorX + connectorY * connectorY);
-			connectorX /= length; connectorY /= length;
+			Vector2D connector = childCanvPos - nodeCanvPos;
+			normalize(connector); 
+			Vector2D edgeStart = nodeCanvRadius * connector;
+			Vector2D edgeEnd = -1 * childCanvRadius * connector;
 
-			cr->move_to(nodeCanvasX + connectorX * nodeCanvasRadius,
-					    nodeCanvasY + connectorY * nodeCanvasRadius);
-			cr->line_to(childCanvasX - connectorX * childCanvasRadius,
-						childCanvasY - connectorY * childCanvasRadius);
+			cr->move_to(nodeCanvPos.x + edgeStart.x, nodeCanvPos.y + edgeStart.y);
+			cr->line_to(childCanvPos.x + edgeEnd.x, childCanvPos.y + edgeEnd.y);
 			cr->stroke();
 		}
 	}
@@ -60,22 +60,19 @@ bool GraphCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 bool GraphCanvas::on_button_press_event(GdkEventButton* evt)
 {
-	mScrollX = evt->x;
-	mScrollY = evt->y;
+	mPanPos = Vector2D(evt->x, evt->y);
 	return true;
 }
 
 bool GraphCanvas::on_scroll_event(GdkEventScroll* evt)
 {
-	double graphX = 1 / mZoom * (evt->x - mCanvasX);
-	double graphY = 1 / mZoom * (evt->y - mCanvasY);
+	Vector2D nodePos = 1 / mZoom * (Vector2D(evt->x, evt->y) - mCanvPos);
 	double oldZoom = mZoom;
 
 	if (evt->direction == GDK_SCROLL_UP) mZoom *= 2;
 	else if (evt->direction == GDK_SCROLL_DOWN) mZoom /= 2;
 
-	mCanvasX += graphX * (oldZoom - mZoom);
-	mCanvasY += graphY * (oldZoom - mZoom);
+	mCanvPos += nodePos * (oldZoom - mZoom);
 	queue_draw();
 	return true;
 }
@@ -86,12 +83,11 @@ bool GraphCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	else if (evt->is_hint) return true;
 	else 
 	{
-		double deltaX = evt->x - mScrollX;
-		double deltaY = evt->y - mScrollY;
-		mCanvasX += deltaX; mCanvasY += deltaY;
+		Vector2D newPanPos(evt->x, evt->y);
+		Vector2D delta = Vector2D(evt->x, evt->y) - mPanPos;
+		mCanvPos += delta;
+		mPanPos = newPanPos;
 		queue_draw();
-		mScrollX = evt->x;
-		mScrollY = evt->y;	
 	}
 	
 	return true;

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	Graph* testGraph = new Graph(readJsonTree(filename));
 	for (auto i = testGraph->begin(); i != testGraph->end(); ++i)
 		testGraph->vertexData(i->first)->radius = 5;
-	graph::layoutTreeLevel(*testGraph, {0, 0}, 50, 25);
+	graph::layoutTreeLevel(*testGraph, 0, 0, 50, 25);
 
 	auto app = Gtk::Application::create(argc, argv, "testing.app");
 	VizWindow win(testGraph);

@@ -17,7 +17,9 @@ struct BnbVertexData : public graph::VertexData
 	BranchDir branchDir;
 
 	BnbVertexData* clone() { return new BnbVertexData(*this); }
+	~BnbVertexData() { }
 };
+
 
 #endif // TYPES_H
 

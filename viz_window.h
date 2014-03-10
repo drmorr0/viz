@@ -1,6 +1,8 @@
 #ifndef VIZ_WINDOW_H
 #define VIZ_WINDOW_H
 
+#include "vector2d.h"
+
 #include <graph.h>
 using graph::Graph;
 
@@ -17,10 +19,8 @@ public:
 private:
 
 	// Canvas position information
-	int mCanvasX, mCanvasY;
+	Vector2D mCanvPos, mPanPos;
 	double mZoom;
-
-	double mScrollX, mScrollY;
 
 	Graph* mGraph;
 
