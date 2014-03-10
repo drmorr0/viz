@@ -1,7 +1,8 @@
 
 #include "viz_window.h"
+#include "vertex.h"
 
-VizWindow::VizWindow(Graph* graph, Gtk::WindowType wt) :
+VizWindow::VizWindow(const Graph& graph, Gtk::WindowType wt) :
 	Gtk::Window(wt)
 {
 	set_default_size(600, 400);
@@ -14,23 +15,28 @@ VizWindow::VizWindow(Graph* graph, Gtk::WindowType wt) :
 	mCanvas->show();
 }
 
-GraphCanvas::GraphCanvas(Graph* graph) :
-	mCanvPos(-400, -20),
-	mZoom(1.0),
-	mGraph(graph)
+GraphCanvas::GraphCanvas(const Graph& graph) :
+	mCanvOffset(-400, -20),
+	mZoom(1.0)
 {
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	for (auto node = graph.begin(); node != graph.end(); ++node)
+	{
+		auto nodeData = graph.vertexData(node->first);
+		mScene.addObject(new VertexSceneObject(nodeData->x, nodeData->y, nodeData->radius));
+	}
 }
 
-bool GraphCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+bool GraphCanvas::on_draw(const CairoContext& ctx)
 {
-	for (auto node = mGraph->begin(); node != mGraph->end(); ++node)
+	mScene.render(ctx, mCanvOffset, mZoom);
+/*	for (auto node = mGraph->begin(); node != mGraph->end(); ++node)
 	{
 		auto nodeData = mGraph->vertexData(node->first);
 
 		// Translate from the position in graph-embedding space to canvas space
 		Vector2D nodePos(nodeData->x, nodeData->y);
-		Vector2D nodeCanvPos = mCanvPos + mZoom * nodePos;
+		Vector2D nodeCanvPos = mCanvOffset + mZoom * nodePos;
 		double nodeCanvRadius = nodeData->radius * mZoom;
 
 		// Draw a circle for the node
@@ -41,7 +47,7 @@ bool GraphCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		{
 			auto childData = mGraph->vertexData(*child);
 			Vector2D childPos(childData->x, childData->y);
-			Vector2D childCanvPos = mCanvPos + mZoom * childPos;
+			Vector2D childCanvPos = mCanvOffset + mZoom * childPos;
 			double childCanvRadius = childData->radius * mZoom;
 			
 			Vector2D connector = childCanvPos - nodeCanvPos;
@@ -53,7 +59,7 @@ bool GraphCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 			cr->line_to(childCanvPos.x + edgeEnd.x, childCanvPos.y + edgeEnd.y);
 			cr->stroke();
 		}
-	}
+	}*/
 
 	return true;
 }
@@ -66,14 +72,14 @@ bool GraphCanvas::on_button_press_event(GdkEventButton* evt)
 
 bool GraphCanvas::on_scroll_event(GdkEventScroll* evt)
 {
-	Vector2D nodePos = 1 / mZoom * (Vector2D(evt->x, evt->y) - mCanvPos);
+	Vector2D nodePos = 1 / mZoom * (Vector2D(evt->x, evt->y) - mCanvOffset);
 	double oldZoom = mZoom;
 
 	if (evt->direction == GDK_SCROLL_UP) mZoom *= 2;
 	else if (evt->direction == GDK_SCROLL_DOWN) mZoom /= 2;
 
-	mCanvPos += nodePos * (oldZoom - mZoom);
-	queue_draw();
+	mCanvOffset += nodePos * (oldZoom - mZoom);
+	queue_draw();  // TODO only redraw visible part of scene graph
 	return true;
 }
 
@@ -85,9 +91,9 @@ bool GraphCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	{
 		Vector2D newPanPos(evt->x, evt->y);
 		Vector2D delta = Vector2D(evt->x, evt->y) - mPanPos;
-		mCanvPos += delta;
+		mCanvOffset += delta;
 		mPanPos = newPanPos;
-		queue_draw();
+		queue_draw();  // TODO only redraw visible part of scene graph
 	}
 	
 	return true;

@@ -1,6 +1,7 @@
 #ifndef VIZ_WINDOW_H
 #define VIZ_WINDOW_H
 
+#include "scene.h"
 #include "vector2d.h"
 
 #include <graph.h>
@@ -14,15 +15,15 @@ using graph::Graph;
 class GraphCanvas : public Gtk::DrawingArea
 {
 public:
-	GraphCanvas(Graph* graph);
+	GraphCanvas(const Graph& graph);
 
 private:
 
 	// Canvas position information
-	Vector2D mCanvPos, mPanPos;
+	Vector2D mCanvOffset, mPanPos;
 	double mZoom;
 
-	Graph* mGraph;
+	Scene mScene;
 
 	// Signal handlers
 	virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
@@ -34,7 +35,7 @@ private:
 class VizWindow : public Gtk::Window
 {
 public:
-	VizWindow(Graph* graph, Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
+	VizWindow(const Graph& graph, Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
 	
 private:
 	GraphCanvas* mCanvas;
