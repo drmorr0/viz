@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	opts options;
 	const char* filename = parseOpts(argc, argv, options);
 
-	Graph testGraph = readJsonTree(filename);
+	vector<Graph> testGraph = { readJsonTree(filename), readJsonTree(filename) };
 
 	auto app = Gtk::Application::create(argc, argv, "testing.app");
 	VizWindow win(testGraph);
