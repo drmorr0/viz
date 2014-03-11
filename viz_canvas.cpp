@@ -24,6 +24,7 @@ VizCanvas::VizCanvas(VizTab* parent) :
 	mCanvOffset(-400, -20),
 	mZoom(1.0)
 {
+	// TODO - Clean this up?
 	mScene = new Scene;
 
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event

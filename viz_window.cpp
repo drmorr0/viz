@@ -18,6 +18,7 @@ VizWindow::VizWindow(const vector<Graph>& graphs, Gtk::WindowType wt) :
 
 	for (int i = 0; i < graphs.size(); ++i)
 	{
+		// TODO - clean up this memory madness!  (smart pointers?)
 		mTabContents.push_back(new VizTab(new Graph(graphs[i])));
 		mTabContents[i]->show_all();
 		mTabLabels.push_back(new Gtk::Label("A tab"));
@@ -26,5 +27,7 @@ VizWindow::VizWindow(const vector<Graph>& graphs, Gtk::WindowType wt) :
 	mTabManager.show_all();
 	add(mTabManager);
 }
+
+	
 
 

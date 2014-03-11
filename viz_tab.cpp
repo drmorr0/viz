@@ -7,6 +7,7 @@
 VizTab::VizTab(Graph* graph) :
 	mGraph(graph)
 {
+	// TODO - clean up this memory madness (smart pointers?)
 	mCanvas = new VizCanvas(this);
 	add(*mCanvas);
 }
