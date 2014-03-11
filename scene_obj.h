@@ -10,22 +10,6 @@
 
 #include "scene.h"
 
-// A generic SceneObject base class
-class SceneObject
-{
-public:
-	virtual ~SceneObject() { };
-	virtual bool contains(const Vector2D& pt) = 0;
-	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
-
-protected:
-	friend class Scene;
-	Scene* mParentScene;
-
-private:		// Only the Scene Manager should be able to control the object's id
-	int mId;
-};
-
 // A scene object for vertices of a graph
 class VertexSceneObject : public SceneObject
 {
@@ -35,6 +19,7 @@ public:
 
 	virtual bool contains(const Vector2D& pt);
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
+	virtual void move(const Vector2D& delta);
 
 	Vector2D getPos() const { return mCenter; }
 	double getRadius() const { return mRadius; }
@@ -52,6 +37,7 @@ public:
 
 	virtual bool contains(const Vector2D& pt);
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
+	virtual void move(const Vector2D& delta) { return; }
 
 private:
 	int mTailId, mHeadId;

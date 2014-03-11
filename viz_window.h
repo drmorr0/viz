@@ -7,6 +7,8 @@
 #include <graph.h>
 using graph::Graph;
 
+#include <vector>
+
 #include <gdk/gdk.h>
 #include <gtkmm.h>
 #include <cairomm/context.h>
@@ -18,12 +20,14 @@ public:
 	GraphCanvas(const Graph& graph);
 
 private:
+	Scene mScene;
 
 	// Canvas position information
-	Vector2D mCanvOffset, mPanPos;
+	Vector2D mCanvOffset;
 	double mZoom;
 
-	Scene mScene;
+	Vector2D mDragPos;
+	std::vector<int> mDragItems;
 
 	// Signal handlers
 	virtual bool on_draw(const CairoContext& ctx);

@@ -2,35 +2,25 @@
 #include "viz_window.h"
 #include "scene_obj.h"
 
+#include <graph_layout.h>
+
 #include <map>
 
 using namespace std;
-
-VizWindow::VizWindow(const Graph& graph, Gtk::WindowType wt) :
-	Gtk::Window(wt)
-{
-	set_default_size(600, 400);
-	set_position(Gtk::WIN_POS_CENTER);
-
-	mCanvas = new GraphCanvas(graph);
-	mCanvas->set_size_request(600,400);
-
-	add(*mCanvas);
-	mCanvas->show();
-}
 
 GraphCanvas::GraphCanvas(const Graph& graph) :
 	mCanvOffset(-400, -20),
 	mZoom(1.0)
 {
-	add_events(Gdk::ALL_EVENTS_MASK);
+	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | 
+			   Gdk::POINTER_MOTION_MASK);
 
+	GraphLayout treeLayout = graph::layoutTreeLevel(graph, 0, 0, 5, 50, 25);
 	std::map<int, int> node2scene;
-	for (auto node = graph.begin(); node != graph.end(); ++node)
+	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)
 	{
-		auto nodeData = graph.vertexData(node->first);
 		int sceneId = mScene.addObject(
-				new VertexSceneObject(nodeData->x, nodeData->y, nodeData->radius));
+				new VertexSceneObject(node->second.first, node->second.second, 5));
 		node2scene[node->first] = sceneId;
 	}
 
@@ -47,7 +37,22 @@ bool GraphCanvas::on_draw(const CairoContext& ctx)
 
 bool GraphCanvas::on_button_press_event(GdkEventButton* evt)
 {
-	mPanPos = Vector2D(evt->x, evt->y);
+	mDragPos = Vector2D(evt->x, evt->y);
+	vector<int> selectedObjs = mScene.findObjects(1 / mZoom * (mDragPos - mCanvOffset));
+	
+	// If the user clicked on an object, start dragging it
+	mDragItems.clear();
+	for (int i = 0; i < selectedObjs.size(); ++i)
+	{
+		// Right now, we just drag the first object in the list that is marked as
+		// "movable" -- TODO something more complicated with z-indices, perhaps?
+		if (mScene.get(selectedObjs[i])->state() & MOVABLE)
+		{
+			mDragItems.push_back(selectedObjs[i]);
+			break;
+		}
+	}
+
 	return true;
 }
 
@@ -82,12 +87,29 @@ bool GraphCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	else if (evt->is_hint) return true;
 	else 
 	{
-		Vector2D newPanPos(evt->x, evt->y);
-		Vector2D delta = Vector2D(evt->x, evt->y) - mPanPos;
-		mCanvOffset += delta;
-		mPanPos = newPanPos;
+		Vector2D newDragPos(evt->x, evt->y);
+		Vector2D delta = newDragPos - mDragPos;
+		if (mDragItems.size() == 0) mCanvOffset += delta;
+		else for (int i = 0; i < mDragItems.size(); ++i)
+			mScene.get(mDragItems[i])->move(1 / mZoom * delta);
+		mDragPos = newDragPos;
 		queue_draw();  // TODO only redraw visible part of scene graph
 	}
 	
 	return true;
 }
+
+VizWindow::VizWindow(const Graph& graph, Gtk::WindowType wt) :
+	Gtk::Window(wt)
+{
+	set_default_size(600, 400);
+	set_position(Gtk::WIN_POS_CENTER);
+
+	mCanvas = new GraphCanvas(graph);
+	mCanvas->set_size_request(600,400);
+
+	add(*mCanvas);
+	mCanvas->show();
+}
+
+

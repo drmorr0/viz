@@ -24,6 +24,8 @@ struct BnbVertexData : public graph::VertexData
 
 typedef Cairo::RefPtr<Cairo::Context> CairoContext;
 
+const int MOVABLE = 1 << 0;
+
 #endif // TYPES_H
 
 

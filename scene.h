@@ -15,7 +15,29 @@
 
 #include <map>
 
-class SceneObject;
+class Scene;
+
+// A generic SceneObject base class
+class SceneObject
+{
+public:
+	SceneObject(int state) : mState(state) { };
+	virtual ~SceneObject() { };
+
+	int state() { return mState; }
+
+	virtual bool contains(const Vector2D& pt) = 0;
+	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
+	virtual void move(const Vector2D& delta) = 0;
+
+protected:
+	friend class Scene;
+	Scene* mParentScene;
+	int mState;
+
+private:		// Only the Scene Manager should be able to control the object's id
+	int mId;
+};
 
 class Scene
 {

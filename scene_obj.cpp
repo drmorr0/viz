@@ -10,6 +10,7 @@ VertexSceneObject::VertexSceneObject(double x, double y, double radius) :
 }
 
 VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius) :
+	SceneObject(MOVABLE),
 	mCenter(center),
 	mRadius(radius)
 {
@@ -32,7 +33,13 @@ void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffs
 	ctx->stroke();
 }
 
+void VertexSceneObject::move(const Vector2D& delta)
+{
+	mCenter += delta;
+}
+
 EdgeSceneObject::EdgeSceneObject(int tailId, int headId) :
+	SceneObject(0),
 	mTailId(tailId),
 	mHeadId(headId)
 {

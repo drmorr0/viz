@@ -6,7 +6,6 @@
 #include "viz_window.h"
 
 #include <graph.h>
-#include <graph_layout.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -26,9 +25,6 @@ int main(int argc, char* argv[])
 	const char* filename = parseOpts(argc, argv, options);
 
 	Graph testGraph = readJsonTree(filename);
-	for (auto i = testGraph.begin(); i != testGraph.end(); ++i)
-		testGraph.vertexData(i->first)->radius = 5;
-	graph::layoutTreeLevel(testGraph, 0, 0, 50, 25);
 
 	auto app = Gtk::Application::create(argc, argv, "testing.app");
 	VizWindow win(testGraph);
