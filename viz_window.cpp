@@ -1,6 +1,10 @@
 
 #include "viz_window.h"
-#include "vertex.h"
+#include "scene_obj.h"
+
+#include <map>
+
+using namespace std;
 
 VizWindow::VizWindow(const Graph& graph, Gtk::WindowType wt) :
 	Gtk::Window(wt)
@@ -20,47 +24,24 @@ GraphCanvas::GraphCanvas(const Graph& graph) :
 	mZoom(1.0)
 {
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+
+	std::map<int, int> node2scene;
 	for (auto node = graph.begin(); node != graph.end(); ++node)
 	{
 		auto nodeData = graph.vertexData(node->first);
-		mScene.addObject(new VertexSceneObject(nodeData->x, nodeData->y, nodeData->radius));
+		int sceneId = mScene.addObject(
+				new VertexSceneObject(nodeData->x, nodeData->y, nodeData->radius));
+		node2scene[node->first] = sceneId;
 	}
+
+	for (auto tail = graph.begin(); tail != graph.end(); ++tail)
+		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
+			mScene.addObject(new EdgeSceneObject(node2scene[tail->first], node2scene[*head]));
 }
 
 bool GraphCanvas::on_draw(const CairoContext& ctx)
 {
 	mScene.render(ctx, mCanvOffset, mZoom);
-/*	for (auto node = mGraph->begin(); node != mGraph->end(); ++node)
-	{
-		auto nodeData = mGraph->vertexData(node->first);
-
-		// Translate from the position in graph-embedding space to canvas space
-		Vector2D nodePos(nodeData->x, nodeData->y);
-		Vector2D nodeCanvPos = mCanvOffset + mZoom * nodePos;
-		double nodeCanvRadius = nodeData->radius * mZoom;
-
-		// Draw a circle for the node
-		cr->arc(nodeCanvPos.x, nodeCanvPos.y, nodeCanvRadius, 0, 2 * M_PI);
-		cr->stroke();
-
-		for (auto child = node->second.begin(); child != node->second.end(); ++child)
-		{
-			auto childData = mGraph->vertexData(*child);
-			Vector2D childPos(childData->x, childData->y);
-			Vector2D childCanvPos = mCanvOffset + mZoom * childPos;
-			double childCanvRadius = childData->radius * mZoom;
-			
-			Vector2D connector = childCanvPos - nodeCanvPos;
-			normalize(connector); 
-			Vector2D edgeStart = nodeCanvRadius * connector;
-			Vector2D edgeEnd = -1 * childCanvRadius * connector;
-
-			cr->move_to(nodeCanvPos.x + edgeStart.x, nodeCanvPos.y + edgeStart.y);
-			cr->line_to(childCanvPos.x + edgeEnd.x, childCanvPos.y + edgeEnd.y);
-			cr->stroke();
-		}
-	}*/
-
 	return true;
 }
 

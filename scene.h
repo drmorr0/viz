@@ -13,27 +13,20 @@
 #include "vector2d.h"
 #include "types.h"
 
-#include <vector>
+#include <map>
 
-class SceneObject
-{
-public:
-	virtual ~SceneObject() { };
-	virtual bool contains(const Vector2D& pt) = 0;
-	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
-
-private:
-	friend class Scene;
-	int mId;
-};
+class SceneObject;
 
 class Scene
 {
 public:
-	Scene() { }
+	Scene() : mObjNextId(0) { }
 	~Scene();
+
 	int addObject(SceneObject* obj); 
 	std::vector<int> findObjects(const Vector2D& pt);
+	SceneObject* const get(int id) const;
+
 	void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
 
 private:
@@ -41,7 +34,8 @@ private:
 	Scene(const Scene&); 
 	const Scene operator=(const Scene&);
 
-	std::vector<SceneObject*> mObjects;
+	int mObjNextId;
+	std::map<int, SceneObject*> mObjects;
 };
 
 #endif // SCENE_H

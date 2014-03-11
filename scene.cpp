@@ -2,19 +2,21 @@
 // Class to manage the scene for the visualization software
 
 #include "scene.h"
+#include "scene_obj.h"
 
 using namespace std;
 
 Scene::~Scene()
 {
 	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
-		delete *i;
+		delete (i->second);
 }
 
 int Scene::addObject(SceneObject* obj)
 {
-	obj->mId = mObjects.size();
-	mObjects.push_back(obj);
+	obj->mParentScene = this;
+	obj->mId = mObjNextId++;
+	mObjects[obj->mId] = obj;
 	return obj->mId;
 }
 
@@ -23,17 +25,23 @@ vector<int> Scene::findObjects(const Vector2D& pt)
 	vector<int> objs;
 	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
 	{
-		if ((*i)->contains(pt))
-			objs.push_back((*i)->mId);
+		if (i->second->contains(pt))
+			objs.push_back(i->first);
 	}
 
 	return objs;
 }
 
+SceneObject* const Scene::get(int id) const
+{
+	if (mObjects.count(id) == 0) return nullptr;
+	else return mObjects.find(id)->second;
+}
+
 void Scene::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
 {
 	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
-		(*i)->render(ctx, canvOffset, zoom);
+		i->second->render(ctx, canvOffset, zoom);
 }
 
 

@@ -4,7 +4,7 @@
 #    make sure the directory exists)
 # 3. Change $(EXEC) to be the name you want for your executable
 
-SRCS = main.cpp scene.cpp vertex.cpp viz_io.cpp viz_window.cpp vector2d.cpp
+SRCS = main.cpp scene.cpp scene_obj.cpp viz_io.cpp viz_window.cpp vector2d.cpp
 CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0` -I../graph-lib
 LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0` -ljson_spirit -L../graph-lib 
 EXEC = gviz
