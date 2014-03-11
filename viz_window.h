@@ -26,8 +26,9 @@ private:
 	Scene mScene;
 
 	// Signal handlers
-	virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+	virtual bool on_draw(const CairoContext& ctx);
 	virtual bool on_button_press_event(GdkEventButton* evt);
+	virtual bool on_button_release_event(GdkEventButton* evt);
 	virtual bool on_scroll_event(GdkEventScroll* evt);
 	virtual bool on_motion_notify_event(GdkEventMotion* evt);
 };

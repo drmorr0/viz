@@ -23,7 +23,7 @@ GraphCanvas::GraphCanvas(const Graph& graph) :
 	mCanvOffset(-400, -20),
 	mZoom(1.0)
 {
-	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	add_events(Gdk::ALL_EVENTS_MASK);
 
 	std::map<int, int> node2scene;
 	for (auto node = graph.begin(); node != graph.end(); ++node)
@@ -48,6 +48,18 @@ bool GraphCanvas::on_draw(const CairoContext& ctx)
 bool GraphCanvas::on_button_press_event(GdkEventButton* evt)
 {
 	mPanPos = Vector2D(evt->x, evt->y);
+	return true;
+}
+
+bool GraphCanvas::on_button_release_event(GdkEventButton* evt)
+{
+	Vector2D clickPos(evt->x, evt->y);
+	vector<int> selectedObjs = mScene.findObjects(1 / mZoom * (clickPos - mCanvOffset));
+
+	for (int i = 0; i < selectedObjs.size(); ++i)
+	{
+		printf("User clicked on object %d\n", selectedObjs[i]);
+	}
 	return true;
 }
 
