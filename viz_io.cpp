@@ -18,13 +18,13 @@ Graph readJsonTree(const char* filename)
 {
 	Graph g(graph::SimpleDirected);
 	ifstream input(filename);
-	if (!input) throw ERROR << "Unable to open file " << filename << " for reading.";
+	if (!input) throw MY_ERROR << "Unable to open file " << filename << " for reading.";
 	
 	json::Value val;
 	while (json::read(input, val))
 	{
 		if (val.type() != json::obj_type)
-			throw ERROR << "Invalid JSON format for " << filename;
+			throw MY_ERROR << "Invalid JSON format for " << filename;
 		json::Object obj = val.get_obj();
 
 		int nodeId = -1;

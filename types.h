@@ -2,8 +2,11 @@
 #define TYPES_H
 
 #include <graph.h>
+#include <gtkmm.h>
 #include <cairomm/context.h>
 #include <string>
+#include <memory>
+using std::unique_ptr;
 
 enum BranchDir { Down = -1, Up = 1 };
 
@@ -23,6 +26,8 @@ struct BnbVertexData : public graph::VertexData
 };
 
 typedef Cairo::RefPtr<Cairo::Context> CairoContext;
+typedef unique_ptr<Gtk::Widget> GtkWidgetPtr;
+typedef unique_ptr<graph::Graph> GraphPtr;
 
 const int MOVABLE = 1 << 0;
 

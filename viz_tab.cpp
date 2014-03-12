@@ -4,11 +4,10 @@
 #include "viz_tab.h"
 #include "viz_canvas.h"
 
-VizTab::VizTab(Graph* graph) :
-	mGraph(graph)
+VizTab::VizTab(const Graph& graph) :
+	mGraph(new Graph(graph)),
+	mCanvas(new VizCanvas(this))
 {
-	// TODO - clean up this memory madness (smart pointers?)
-	mCanvas = new VizCanvas(this);
 	add(*mCanvas);
 }
 

@@ -9,9 +9,10 @@
  *
  */
 
+#include "types.h"
+
 #include <graph.h>
 using graph::Graph;
-class VizCanvas;
 
 #include <gtkmm.h>
 
@@ -20,13 +21,13 @@ class VizWindow;
 class VizTab : public Gtk::Frame
 {
 public:
-	VizTab(Graph* graph);
+	VizTab(const Graph& graph);
 	VizTab(const VizTab& rhs);
-	Graph* const currGraph() { return mGraph; }
+	const Graph* const currGraph() const { return mGraph.get(); }
 
 private:
-	VizCanvas* mCanvas;
-	Graph* mGraph;	
+	GraphPtr mGraph;	
+	GtkWidgetPtr mCanvas;
 };
 
 #endif // VIZ_TAB_H

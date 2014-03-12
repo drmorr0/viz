@@ -22,8 +22,8 @@ public:
 	VizCanvas(VizTab* parent);
 
 private:
-	VizTab* mParent;
-	Scene* mScene;
+	const VizTab* const mParent;
+	unique_ptr<Scene> mScene;
 
 	// Canvas position information
 	Vector2D mCanvOffset;

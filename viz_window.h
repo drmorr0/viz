@@ -15,9 +15,13 @@ class VizWindow : public Gtk::Window
 public:
 	VizWindow(const std::vector<Graph>& graphs, Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
 	
+	// Disable copy/assignment for now
+	VizWindow(const VizWindow&) = delete;
+	VizWindow& operator=(const VizWindow&) = delete;
+	
 private:
-	std::vector<VizTab*> mTabContents;
-	std::vector<Gtk::Label*> mTabLabels;
+	std::vector<GtkWidgetPtr> mTabContents;
+	std::vector<GtkWidgetPtr> mTabLabels;
 	Gtk::Notebook mTabManager;
 	
 };

@@ -43,7 +43,7 @@ private:
 	stringstream _msg;
 };
 
-#define ERROR Error(__FILE__, __LINE__)
+#define MY_ERROR Error(__FILE__, __LINE__)
 
 /*** Miscellaneous utility functions ***/
 template <typename ContainerT, typename U>

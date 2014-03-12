@@ -21,19 +21,15 @@ using namespace std;
  */
 VizCanvas::VizCanvas(VizTab* parent) :
 	mParent(parent),
+	mScene(new Scene),
 	mCanvOffset(-400, -20),
 	mZoom(1.0)
 {
-	// TODO - Clean this up?
-	mScene = new Scene;
-
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
 	// handlers, nor does it seem to work with the Gdk::ALL_EVENTS_MASK (TODO)
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | 
 			   Gdk::POINTER_MOTION_MASK);
 
-	if (mParent)
-	{
 	// Compute an initial layout for the graph that we want to display
 	GraphLayout treeLayout = graph::layoutTreeLevel(*(mParent->currGraph()), 0, 0, 5, 50, 25);
 	std::map<int, int> node2scene;
@@ -50,7 +46,6 @@ VizCanvas::VizCanvas(VizTab* parent) :
 	for (auto tail = mParent->currGraph()->begin(); tail != mParent->currGraph()->end(); ++tail)
 		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
 			mScene->addObject(new EdgeSceneObject(node2scene[tail->first], node2scene[*head]));
-	}
 }
 
 /**** EVENT HANDLERS *****/
@@ -72,7 +67,6 @@ bool VizCanvas::on_draw(const CairoContext& ctx)
  */
 bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 {
-	printf("ding!\n");
 	mDragPos = Vector2D(evt->x, evt->y);
 	vector<int> selectedObjs = mScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
 	
