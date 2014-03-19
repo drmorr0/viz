@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
 
 	vector<Graph> testGraph = { readJsonTree(filename), readJsonTree(filename) };
 
-	auto app = Gtk::Application::create(argc, argv, "testing.app");
+	auto app = Gtk::Application::create(argc, argv, "testing.app", 
+			Gio::APPLICATION_HANDLES_COMMAND_LINE);
 	VizWindow win(testGraph);
 	return app->run(win);
 

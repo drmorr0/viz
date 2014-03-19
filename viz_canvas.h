@@ -11,6 +11,7 @@
 #include "types.h"
 #include "vector2d.h"
 
+#include <map>
 #include <gtkmm.h>
 
 class Scene;
@@ -22,7 +23,7 @@ public:
 	VizCanvas(VizTab* parent);
 
 private:
-	const VizTab* const mParent;
+	const VizTab* mParent;
 	unique_ptr<Scene> mScene;
 
 	// Canvas position information
@@ -38,6 +39,12 @@ private:
 	virtual bool on_button_release_event(GdkEventButton* evt);
 	virtual bool on_scroll_event(GdkEventScroll* evt);
 	virtual bool on_motion_notify_event(GdkEventMotion* evt);
+
+	// Convert from graph ids to scene ids and vice versa (TODO make more memory efficient)
+	int toGraphID(int sceneID) const;
+	int toSceneID(int graphID) const;
+	std::map<int, int> graph2scene;
+	std::map<int, int> scene2graph;
 };
 
 #endif // VIZ_CANVAS_H

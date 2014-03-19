@@ -23,7 +23,6 @@ VizWindow::VizWindow(const vector<Graph>& graphs, Gtk::WindowType wt) :
 		GtkWidgetPtr label(new Gtk::Label("Tab"));
 		mTabLabels.push_back(std::move(label));
 
-		mTabContents[i]->show_all();
 		mTabManager.append_page(*mTabContents[i], *mTabLabels[i]);
 	}
 	mTabManager.show_all();

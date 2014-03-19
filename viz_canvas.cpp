@@ -6,6 +6,8 @@
 #include "scene.h"
 #include "scene_obj.h"
 
+#include "more_graph_utils.h"
+
 #include <graph.h>
 #include <graph_layout.h>
 using graph::Graph;
@@ -22,7 +24,7 @@ using namespace std;
 VizCanvas::VizCanvas(VizTab* parent) :
 	mParent(parent),
 	mScene(new Scene),
-	mCanvOffset(-400, -20),
+	mCanvOffset(400, 50),
 	mZoom(1.0)
 {
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
@@ -32,20 +34,20 @@ VizCanvas::VizCanvas(VizTab* parent) :
 
 	// Compute an initial layout for the graph that we want to display
 	GraphLayout treeLayout = graph::layoutTreeLevel(*(mParent->currGraph()), 0, 0, 5, 50, 25);
-	std::map<int, int> node2scene;
 
 	// First add all of the vertices to the scene
 	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)
 	{
 		int sceneId = mScene->addObject(
 				new VertexSceneObject(node->second.first, node->second.second, 5));
-		node2scene[node->first] = sceneId;
+		graph2scene[node->first] = sceneId;
+		scene2graph[sceneId] = node->first;
 	}
 
 	// Next add the edges to the scene
 	for (auto tail = mParent->currGraph()->begin(); tail != mParent->currGraph()->end(); ++tail)
 		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
-			mScene->addObject(new EdgeSceneObject(node2scene[tail->first], node2scene[*head]));
+			mScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
 }
 
 /**** EVENT HANDLERS *****/
@@ -78,8 +80,23 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 		// "movable" -- TODO something more complicated with z-indices, perhaps?
 		if (mScene->get(selectedObjs[i])->state() & MOVABLE)
 		{
-			mDragItems.push_back(selectedObjs[i]);
-			break;
+			// If the 'shift' button is held down and we clicked on a vertex (right now, vertices
+			// are the only MOVABLE objects; TODO), we want to be able to drag the entire subtree.
+			// Since our tree is directed, this is just all the vertices reachable from what we
+			// clicked on
+			if (evt->state & GDK_SHIFT_MASK)
+			{
+				const Graph* g = mParent->currGraph();
+				vector<int> subtree = graph::getReachable(*g, { toGraphID(selectedObjs[i]) } ); 
+				for (int j = 0; j < subtree.size(); ++j)
+					mDragItems.push_back(toSceneID(subtree[j]));
+				break;
+			}
+			else
+			{
+				mDragItems.push_back(selectedObjs[i]);
+				break;
+			}
 		}
 	}
 
@@ -141,4 +158,26 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	}
 	
 	return true;
+}
+
+/***** End event handlers *****/
+
+/*
+ * toGraphID: convert a scene ID to a graph ID
+ */
+int VizCanvas::toGraphID(int sceneID) const
+{
+	if (scene2graph.count(sceneID) > 0)
+		return scene2graph.find(sceneID)->second;
+	else return -1;
+}
+
+/*
+ * toSceneID: convert a graph ID to a scene ID
+ */
+int VizCanvas::toSceneID(int graphID) const
+{
+	if (graph2scene.count(graphID) > 0)
+		return graph2scene.find(graphID)->second;
+	else return -1;
 }

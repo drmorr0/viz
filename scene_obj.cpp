@@ -1,5 +1,5 @@
 // scene_obj.cpp: David R. Morrison, March 2014
-// Implementation details for the VertexSceneObject class
+// Implementation details for SceneObjects
 
 #include "scene_obj.h"
 
