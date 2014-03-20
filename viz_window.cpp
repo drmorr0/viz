@@ -3,30 +3,31 @@
 
 #include "viz_window.h"
 #include "viz_canvas.h"
+#include "viz_tab.h"
 #include "scene_obj.h"
 
-#include <graph_layout.h>
-#include <map>
+#include <graph.h>
 
 using namespace std;
 
-VizWindow::VizWindow(const vector<Graph>& graphs, Gtk::WindowType wt) :
-	Gtk::Window(wt)
+VizWindow::VizWindow(const char* gladeFile, Gtk::WindowType wt) :
+	Gtk::Window(wt),
+	builder(Gtk::Builder::create_from_file(gladeFile))
 {
-	set_default_size(600, 400);
-	set_position(Gtk::WIN_POS_CENTER);
+	maximize();
+	Gtk::Widget* grid;
+	builder->get_widget("viz_main_grid", grid);
+	add(*grid);
+}
 
-	for (int i = 0; i < graphs.size(); ++i)
-	{
-		GtkWidgetPtr tab(new VizTab(graphs[i]));
-		mTabContents.push_back(std::move(tab));
-		GtkWidgetPtr label(new Gtk::Label("Tab"));
-		mTabLabels.push_back(std::move(label));
+void VizWindow::createTab(const char* tabName, const Graph& tabContents)
+{
+	Gtk::Notebook* vizTabs;
+	builder->get_widget("viz_tabs", vizTabs);
 
-		mTabManager.append_page(*mTabContents[i], *mTabLabels[i]);
-	}
-	mTabManager.show_all();
-	add(mTabManager);
+	Gtk::Widget* newTab = Gtk::manage(new VizTab(tabContents));
+	vizTabs->append_page(*newTab, tabName);
+	newTab->show_all();
 }
 
 	

@@ -25,6 +25,7 @@ struct BnbVertexData : public graph::VertexData
 	~BnbVertexData() { }
 };
 
+typedef Glib::RefPtr<Gtk::Builder> GtkBuildPtr;
 typedef Cairo::RefPtr<Cairo::Context> CairoContext;
 typedef unique_ptr<Gtk::Widget> GtkWidgetPtr;
 typedef unique_ptr<graph::Graph> GraphPtr;

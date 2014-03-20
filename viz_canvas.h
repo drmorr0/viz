@@ -14,6 +14,7 @@
 #include <map>
 #include <gtkmm.h>
 
+class Graph;
 class Scene;
 class VizTab;
 
@@ -23,7 +24,6 @@ public:
 	VizCanvas(VizTab* parent);
 
 private:
-	const VizTab* mParent;
 	unique_ptr<Scene> mScene;
 
 	// Canvas position information
@@ -32,6 +32,7 @@ private:
 
 	Vector2D mDragPos;
 	std::vector<int> mDragItems;
+	bool mDragged;
 
 	// Signal handlers
 	virtual bool on_draw(const CairoContext& ctx);
@@ -39,6 +40,11 @@ private:
 	virtual bool on_button_release_event(GdkEventButton* evt);
 	virtual bool on_scroll_event(GdkEventScroll* evt);
 	virtual bool on_motion_notify_event(GdkEventMotion* evt);
+
+	// Parent window handler
+	const VizTab* mParent;
+	const Graph* mGraph;
+	void setParent(VizTab* parent);
 
 	// Convert from graph ids to scene ids and vice versa (TODO make more memory efficient)
 	int toGraphID(int sceneID) const;

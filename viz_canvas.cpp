@@ -22,18 +22,19 @@ using namespace std;
  *  2) Initialize the scene graph
  */
 VizCanvas::VizCanvas(VizTab* parent) :
-	mParent(parent),
 	mScene(new Scene),
 	mCanvOffset(400, 50),
 	mZoom(1.0)
 {
+	setParent(parent);
+
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
 	// handlers, nor does it seem to work with the Gdk::ALL_EVENTS_MASK (TODO)
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | 
 			   Gdk::POINTER_MOTION_MASK);
 
 	// Compute an initial layout for the graph that we want to display
-	GraphLayout treeLayout = graph::layoutTreeLevel(*(mParent->currGraph()), 0, 0, 5, 50, 25);
+	GraphLayout treeLayout = graph::layoutTreeLevel(*mGraph, 0, 0, 5, 50, 25);
 
 	// First add all of the vertices to the scene
 	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)
@@ -45,7 +46,7 @@ VizCanvas::VizCanvas(VizTab* parent) :
 	}
 
 	// Next add the edges to the scene
-	for (auto tail = mParent->currGraph()->begin(); tail != mParent->currGraph()->end(); ++tail)
+	for (auto tail = mGraph->begin(); tail != mGraph->end(); ++tail)
 		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
 			mScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
 }
@@ -73,7 +74,7 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 	vector<int> selectedObjs = mScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
 	
 	// If the user clicked on an object, start dragging it
-	mDragItems.clear();
+	mDragItems.clear(); mDragged = false;
 	for (int i = 0; i < selectedObjs.size(); ++i)
 	{
 		// Right now, we just drag the first object in the list that is marked as
@@ -86,8 +87,7 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 			// clicked on
 			if (evt->state & GDK_SHIFT_MASK)
 			{
-				const Graph* g = mParent->currGraph();
-				vector<int> subtree = graph::getReachable(*g, { toGraphID(selectedObjs[i]) } ); 
+				vector<int> subtree = graph::getReachable(*mGraph, { toGraphID(selectedObjs[i]) } );
 				for (int j = 0; j < subtree.size(); ++j)
 					mDragItems.push_back(toSceneID(subtree[j]));
 				break;
@@ -109,13 +109,16 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
  */
 bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 {
-/*	Vector2D clickPos(evt->x, evt->y);
-	vector<int> selectedObjs = mScene.findObjects(1 / mZoom * (clickPos - mCanvOffset));
-
-	for (int i = 0; i < selectedObjs.size(); ++i)
+	// If we weren't dragging anything around, then check to see if we clicked on anything
+	// and get its information.  Otherwise do nothing.
+	if (!mDragged)
 	{
-		printf("User clicked on object %d\n", selectedObjs[i]);
-	}*/
+		Vector2D clickPos(evt->x, evt->y);
+		vector<int> selectedObjs = mScene->findObjects(1 / mZoom * (clickPos - mCanvOffset));
+
+		if (selectedObjs.size() > 0) mScene->get(selectedObjs[0])->displayInfo();
+	}
+
 	return true;
 }
 
@@ -148,6 +151,7 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	else if (evt->is_hint) return true;
 	else 
 	{
+		mDragged = true;
 		Vector2D newDragPos(evt->x, evt->y);
 		Vector2D delta = newDragPos - mDragPos;
 		if (mDragItems.size() == 0) mCanvOffset += delta;
@@ -161,6 +165,15 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 }
 
 /***** End event handlers *****/
+
+/*
+ * setParent: Set the owner of the canvas, and make sure our local graph pointer is correct
+ */
+void VizCanvas::setParent(VizTab* parent)
+{
+	mParent = parent;
+	mGraph = mParent->currGraph();
+}
 
 /*
  * toGraphID: convert a scene ID to a graph ID
