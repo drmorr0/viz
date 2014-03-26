@@ -15,11 +15,13 @@ class VizWindow : public Gtk::Window
 {
 public:
 	VizWindow(const char* gladeFile, Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
+	~VizWindow();
 	
 	void createTab(const char* tabName, const Graph& tabContents);
 	
 private:
-	GtkBuildPtr builder;
+	GtkBuildPtr mBuilder;
+	std::vector<Graph*> mTabContents;
 
 public:
 	// Disable copy/assignment for now

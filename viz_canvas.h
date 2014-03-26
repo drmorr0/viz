@@ -11,20 +11,23 @@
 #include "types.h"
 #include "vector2d.h"
 
+#include <graph.h>
+using graph::Graph;
+
 #include <map>
 #include <gtkmm.h>
 
-class Graph;
 class Scene;
 class VizTab;
 
 class VizCanvas : public Gtk::DrawingArea
 {
 public:
-	VizCanvas(VizTab* parent);
+	VizCanvas(Graph* graph);
 
 private:
 	unique_ptr<Scene> mScene;
+	Graph* mGraph;
 
 	// Canvas position information
 	Vector2D mCanvOffset;
@@ -40,11 +43,6 @@ private:
 	virtual bool on_button_release_event(GdkEventButton* evt);
 	virtual bool on_scroll_event(GdkEventScroll* evt);
 	virtual bool on_motion_notify_event(GdkEventMotion* evt);
-
-	// Parent window handler
-	const VizTab* mParent;
-	const Graph* mGraph;
-	void setParent(VizTab* parent);
 
 	// Convert from graph ids to scene ids and vice versa (TODO make more memory efficient)
 	int toGraphID(int sceneID) const;

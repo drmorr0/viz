@@ -1,16 +1,13 @@
 // viz_canvas.cpp: David R. Morrison
 // Implementation details for the VizCanvas class
 
-#include "viz_tab.h"
 #include "viz_canvas.h"
 #include "scene.h"
 #include "scene_obj.h"
 
 #include "more_graph_utils.h"
 
-#include <graph.h>
 #include <graph_layout.h>
-using graph::Graph;
 
 #include <gdk/gdk.h>
 
@@ -21,13 +18,12 @@ using namespace std;
  *  1) Set up the events that the canvas will accept
  *  2) Initialize the scene graph
  */
-VizCanvas::VizCanvas(VizTab* parent) :
+VizCanvas::VizCanvas(Graph* graph) :
 	mScene(new Scene),
+	mGraph(graph),
 	mCanvOffset(400, 50),
 	mZoom(1.0)
 {
-	setParent(parent);
-
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
 	// handlers, nor does it seem to work with the Gdk::ALL_EVENTS_MASK (TODO)
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | 
@@ -165,15 +161,6 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 }
 
 /***** End event handlers *****/
-
-/*
- * setParent: Set the owner of the canvas, and make sure our local graph pointer is correct
- */
-void VizCanvas::setParent(VizTab* parent)
-{
-	mParent = parent;
-	mGraph = mParent->currGraph();
-}
 
 /*
  * toGraphID: convert a scene ID to a graph ID
