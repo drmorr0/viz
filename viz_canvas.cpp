@@ -121,7 +121,7 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 				info += prop->first + ": " + prop->second + "\n";
 			
-			Gtk::TextView* infoBox = (Gtk::TextView*)TheBuilder::get("viz_info_box");
+			Gtk::TextView* infoBox = TheBuilder::get<Gtk::TextView>("viz_info_box");
 			infoBox->get_buffer()->set_text(info);
 		}
 	}

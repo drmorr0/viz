@@ -21,12 +21,19 @@ using std::setprecision;
 class TheBuilder
 {
 public:
-	static Gtk::Widget* get(const char* name);
+	template<typename T = Gtk::Widget>
+	static T* get(const char* name);
 
 private:
 	TheBuilder();
 	TheBuilder(const TheBuilder&);
 	TheBuilder& operator=(const TheBuilder&);
+	static Glib::RefPtr<Gtk::Builder> getBuilder()
+	{
+		static Glib::RefPtr<Gtk::Builder> builder;
+		if (!builder) builder = Gtk::Builder::create_from_file("layouts/viz_main.glade");
+		return builder;
+	}
 };
 
 /*** Constants and Types ***/
@@ -86,6 +93,8 @@ void remove(ContainerT& con, const U& el)
 	auto iter = remove(con.begin(), con.end(), static_cast<ElementT>(el));
 	if (iter != con.end()) con.erase(iter);
 }
+
+#include "util_templates.h"
 
 #endif // UTIL_H
 

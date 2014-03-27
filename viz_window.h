@@ -9,7 +9,7 @@ using graph::Graph;
 #include <vector>
 #include <gtkmm.h>
 
-class VizTab;
+class VizCmdPrompt;
 
 class VizWindow : public Gtk::Window
 {
@@ -21,6 +21,7 @@ public:
 	
 private:
 	std::vector<Graph*> mTabContents;
+	VizCmdPrompt* mPrompt;
 
 public:
 	// Disable copy/assignment for now
