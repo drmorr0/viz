@@ -14,13 +14,12 @@ class VizTab;
 class VizWindow : public Gtk::Window
 {
 public:
-	VizWindow(const char* gladeFile, Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
+	VizWindow(Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
 	~VizWindow();
 	
 	void createTab(const char* tabName, const Graph& tabContents);
 	
 private:
-	GtkBuildPtr mBuilder;
 	std::vector<Graph*> mTabContents;
 
 public:

@@ -8,6 +8,7 @@
 #include <graph.h>
 #include <json_spirit.h>
 #include <fstream>
+#include <string>
 
 using namespace std;
 namespace json = json_spirit;
@@ -63,23 +64,38 @@ Graph readJsonTree(const char* filename)
 		else nodeData = (BnbVertexData*) g.setVertexData(nodeId, new BnbVertexData);
 
 		// Add an edge to the child node, and set up its vertex data, if it doesn't already exist
+		BnbVertexData* childData;
 		if (child != -1) 
 		{
 			g.addEdge(nodeId, child);
-			if (!g.vertexData(child)) 
-				g.setVertexData(child, new BnbVertexData);
+			if (g.vertexData(child)) 
+				childData = (BnbVertexData*) g.vertexData(child);
+			else childData = (BnbVertexData*) g.setVertexData(child, new BnbVertexData);
 		}
 
 		// Fill in the current node vertex data
-		if      (exploredAt != -1)        nodeData->expTime = exploredAt;
-		else if (prunedAt != -1)          nodeData->pruneTime = prunedAt;
-		else if (generatedAt != -1)       nodeData->genTime = generatedAt;
-		else if (lowerBound != -Infinity) nodeData->lb = lowerBound;
-		else if (upperBound != Infinity)  nodeData->ub = upperBound;
-		else if (branchingVar != "")	  nodeData->branchVar = branchingVar;
-		else if (branchDir != 0)          nodeData->branchDir=(BranchDir)branchDir;
-		else if (estimate != -1)		  nodeData->estimate = estimate;
-		else if (contour != MaxInt)		  nodeData->contour = contour;
+		if (exploredAt != -1)        
+			nodeData->properties["Explored"] = to_string(exploredAt);
+		if (prunedAt != -1)          
+			nodeData->properties["Pruned"] = to_string(prunedAt);
+		if (generatedAt != -1)       
+			nodeData->properties["Generated"] = to_string(generatedAt);
+		if (lowerBound != -Infinity) 
+			nodeData->properties["Lower bound"] = to_string(lowerBound);
+		if (upperBound != Infinity)  
+			nodeData->properties["Upper bound"] = to_string(upperBound);
+		if (branchingVar != "")	  
+			nodeData->properties["Branching variable"] = branchingVar;
+		if (branchDir != 0)          
+		{
+			if (branchDir == -1)
+				childData->properties["Branching direction"] = "Down";
+			else childData->properties["Branching direction"] = "Up";
+		}
+		if (estimate != -1)		  
+			childData->properties["Node estimate"] = to_string(estimate);
+		if (contour != MaxInt)		  
+			childData->properties["Contour label"] = to_string(contour);
 
 	}
 	return g;

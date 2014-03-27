@@ -18,6 +18,7 @@ using graph::Graph;
 #include <gtkmm.h>
 
 class Scene;
+class SceneObject;
 class VizTab;
 
 class VizCanvas : public Gtk::DrawingArea
@@ -34,7 +35,7 @@ private:
 	double mZoom;
 
 	Vector2D mDragPos;
-	std::vector<int> mDragItems;
+	std::vector<SceneObject*> mDragItems;
 	bool mDragged;
 
 	// Signal handlers

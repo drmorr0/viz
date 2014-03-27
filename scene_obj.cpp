@@ -38,12 +38,6 @@ void VertexSceneObject::move(const Vector2D& delta)
 	mCenter += delta;
 }
 
-void VertexSceneObject::displayInfo()
-{
-	Gtk::MessageDialog dialog("Here's a message!", false, Gtk::MESSAGE_OTHER, Gtk::BUTTONS_CLOSE, true);
-	dialog.run();
-}
-
 EdgeSceneObject::EdgeSceneObject(int tailId, int headId) :
 	SceneObject(0),
 	mTailId(tailId),
@@ -77,7 +71,3 @@ void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset
 	ctx->stroke();
 }
 
-void EdgeSceneObject::displayInfo()
-{
-	printf("Tail: %d, Head: %d\n", mTailId, mHeadId);
-}

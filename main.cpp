@@ -29,8 +29,7 @@ int main(int argc, char* argv[])
 	auto app = Gtk::Application::create(argc, argv, "testing.app", 
 			Gio::APPLICATION_HANDLES_COMMAND_LINE);
 
-	VizWindow* mainWindow = new VizWindow("layouts/viz_main.glade");
-	mainWindow->createTab(filename, testGraph[0]);
+	VizWindow* mainWindow = new VizWindow();
 	mainWindow->createTab(filename, testGraph[0]);
 
 	return app->run(*mainWindow);

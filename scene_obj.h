@@ -20,7 +20,6 @@ public:
 	virtual bool contains(const Vector2D& pt);
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
 	virtual void move(const Vector2D& delta);
-	virtual void displayInfo();
 
 	Vector2D getPos() const { return mCenter; }
 	double getRadius() const { return mRadius; }
@@ -39,7 +38,6 @@ public:
 	virtual bool contains(const Vector2D& pt);
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
 	virtual void move(const Vector2D& delta) { return; }
-	virtual void displayInfo();
 
 private:
 	int mTailId, mHeadId;

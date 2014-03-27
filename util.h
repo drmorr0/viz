@@ -4,6 +4,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <gtkmm.h>
 #include <vector>
 #include <algorithm>
 #include <exception>
@@ -15,6 +16,18 @@ using std::vector;
 using std::string;
 using std::stringstream;
 using std::setprecision;
+
+/*** Gtk Builder Class ***/
+class TheBuilder
+{
+public:
+	static Gtk::Widget* get(const char* name);
+
+private:
+	TheBuilder();
+	TheBuilder(const TheBuilder&);
+	TheBuilder& operator=(const TheBuilder&);
+};
 
 /*** Constants and Types ***/
 const double Tolerance = 0.000000001;

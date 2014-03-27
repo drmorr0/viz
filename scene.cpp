@@ -20,13 +20,13 @@ int Scene::addObject(SceneObject* obj)
 	return obj->mId;
 }
 
-vector<int> Scene::findObjects(const Vector2D& pt)
+vector<SceneObject*> Scene::findObjects(const Vector2D& pt)
 {
-	vector<int> objs;
+	vector<SceneObject*> objs;
 	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
 	{
 		if (i->second->contains(pt))
-			objs.push_back(i->first);
+			objs.push_back(i->second);
 	}
 
 	return objs;

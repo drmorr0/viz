@@ -4,21 +4,17 @@
 #include "viz_window.h"
 #include "viz_canvas.h"
 #include "scene_obj.h"
+#include "util.h"
 
 #include <graph.h>
 
 using namespace std;
 
-VizWindow::VizWindow(const char* gladeFile, Gtk::WindowType wt) :
-	Gtk::Window(wt),
-	mBuilder(Gtk::Builder::create_from_file(gladeFile))
+VizWindow::VizWindow(Gtk::WindowType wt) :
+	Gtk::Window(wt)
 {
 	maximize();
-	Gtk::Widget* grid;
-	Gtk::Box* box;
-	mBuilder->get_widget("viz_main_grid", grid);
-	mBuilder->get_widget("box1", box);
-	add(*grid);
+	add(*TheBuilder::get("viz_main_grid"));
 }
 
 VizWindow::~VizWindow()
@@ -29,8 +25,7 @@ VizWindow::~VizWindow()
 
 void VizWindow::createTab(const char* tabName, const Graph& tabContents)
 {
-	Gtk::Notebook* vizTabs;
-	mBuilder->get_widget("viz_tabs", vizTabs);
+	Gtk::Notebook* vizTabs = (Gtk::Notebook*)TheBuilder::get("viz_tabs");
 
 	Gtk::Frame* newTab = Gtk::manage(new Gtk::Frame);
 	mTabContents.push_back(new Graph(tabContents));

@@ -30,7 +30,6 @@ public:
 	virtual bool contains(const Vector2D& pt) = 0;
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
 	virtual void move(const Vector2D& delta) = 0;
-	virtual void displayInfo() = 0;
 
 protected:
 	friend class Scene;
@@ -48,7 +47,7 @@ public:
 	~Scene();
 
 	int addObject(SceneObject* obj); 
-	std::vector<int> findObjects(const Vector2D& pt);
+	std::vector<SceneObject*> findObjects(const Vector2D& pt);
 	SceneObject* const get(int id) const;
 
 	void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);

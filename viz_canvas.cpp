@@ -4,11 +4,12 @@
 #include "viz_canvas.h"
 #include "scene.h"
 #include "scene_obj.h"
-
 #include "more_graph_utils.h"
+#include "util.h"
 
 #include <graph_layout.h>
 
+#include <string>
 #include <gdk/gdk.h>
 
 using namespace std;
@@ -67,15 +68,15 @@ bool VizCanvas::on_draw(const CairoContext& ctx)
 bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 {
 	mDragPos = Vector2D(evt->x, evt->y);
-	vector<int> selectedObjs = mScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
+	vector<SceneObject*> selected = mScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
 	
 	// If the user clicked on an object, start dragging it
 	mDragItems.clear(); mDragged = false;
-	for (int i = 0; i < selectedObjs.size(); ++i)
+	for (int i = 0; i < selected.size(); ++i)
 	{
 		// Right now, we just drag the first object in the list that is marked as
 		// "movable" -- TODO something more complicated with z-indices, perhaps?
-		if (mScene->get(selectedObjs[i])->state() & MOVABLE)
+		if (selected[i]->state() & MOVABLE)
 		{
 			// If the 'shift' button is held down and we clicked on a vertex (right now, vertices
 			// are the only MOVABLE objects; TODO), we want to be able to drag the entire subtree.
@@ -83,14 +84,14 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 			// clicked on
 			if (evt->state & GDK_SHIFT_MASK)
 			{
-				vector<int> subtree = graph::getReachable(*mGraph, { toGraphID(selectedObjs[i]) } );
+				vector<int> subtree = graph::getReachable(*mGraph, {toGraphID(selected[i]->id())});
 				for (int j = 0; j < subtree.size(); ++j)
-					mDragItems.push_back(toSceneID(subtree[j]));
+					mDragItems.push_back(mScene->get(toSceneID(subtree[j])));
 				break;
 			}
 			else
 			{
-				mDragItems.push_back(selectedObjs[i]);
+				mDragItems.push_back(selected[i]);
 				break;
 			}
 		}
@@ -110,9 +111,19 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 	if (!mDragged)
 	{
 		Vector2D clickPos(evt->x, evt->y);
-		vector<int> selectedObjs = mScene->findObjects(1 / mZoom * (clickPos - mCanvOffset));
+		vector<SceneObject*> selected = mScene->findObjects(1 / mZoom * (clickPos - mCanvOffset));
 
-		if (selectedObjs.size() > 0) mScene->get(selectedObjs[0])->displayInfo();
+		if (selected.size() > 0)
+		{
+			int gid = toGraphID(selected[0]->id());
+			string info = "Subproblem ID: " + to_string(gid) + "\n";
+			BnbVertexData* data = (BnbVertexData*)mGraph->vertexData(gid);
+			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
+				info += prop->first + ": " + prop->second + "\n";
+			
+			Gtk::TextView* infoBox = (Gtk::TextView*)TheBuilder::get("viz_info_box");
+			infoBox->get_buffer()->set_text(info);
+		}
 	}
 
 	return true;
@@ -152,7 +163,7 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 		Vector2D delta = newDragPos - mDragPos;
 		if (mDragItems.size() == 0) mCanvOffset += delta;
 		else for (int i = 0; i < mDragItems.size(); ++i)
-			mScene->get(mDragItems[i])->move(1 / mZoom * delta);
+			mDragItems[i]->move(1 / mZoom * delta);
 		mDragPos = newDragPos;
 		queue_draw();  // TODO only redraw visible part of scene graph
 	}
