@@ -31,4 +31,33 @@ vector<int> getReachable(const Graph& g, const vector<int>& start)
 	return reachable;
 }
 
+vector<int> match(const Graph& g, const string& filterText, MatchOp op, double value)
+{
+	vector<int> matched;
+	for (auto v = g.begin(); v != g.end(); ++v)
+	{
+		BnbVertexData* data = (BnbVertexData*)g.vertexData(v->first);
+		if (!data) continue;
+
+		for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
+		{
+			if (prop->first.find(filterText) != string::npos)
+			{
+				double propVal;
+				try { propVal = stod(prop->second); } catch (invalid_argument& e) { continue; }
+
+				if ((op == Less 	 && propVal <  value) ||
+					(op == LessEq	 && propVal <= value) ||
+					(op == Eq		 && propVal == value) ||
+					(op == NotEq	 && propVal != value) ||
+					(op == GreaterEq && propVal >= value) ||
+					(op == Greater	 && propVal >  value))
+					matched.push_back(v->first);
+			}
+		}
+	}
+
+	return matched;
+}
+
 }; // namespace graph

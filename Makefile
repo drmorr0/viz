@@ -5,7 +5,7 @@
 # 3. Change $(EXEC) to be the name you want for your executable
 
 SRCS = main.cpp scene.cpp scene_obj.cpp viz_io.cpp viz_canvas.cpp viz_window.cpp viz_cmd.cpp\
-	   vector2d.cpp more_graph_utils.cpp 
+	   vector2d.cpp more_graph_utils.cpp builder.cpp
 CFLAGS = `pkg-config --cflags cairomm-1.0 gtkmm-3.0` -I../graph-lib
 LDFLAGS = `pkg-config --libs cairomm-1.0 gtkmm-3.0` -ljson_spirit -L../graph-lib 
 EXEC = gviz
@@ -13,9 +13,9 @@ EXEC = gviz
 # You can leave this stuff alone for the most part; it sets the right C++ standard, tells the
 # compiler to print output nicely, and prints some useful warning messages
 
-CC = g++ 
-STD = -std=c++0x
-FORMAT = -fno-pretty-templates
+CC = clang++ 
+STD = -std=c++0x 
+FORMAT = 
 WARNINGS = -Wempty-body -Wall -Wno-sign-compare
 DEBUGFLAGS = -g -pg
 OPTFLAGS = -O2
@@ -57,12 +57,7 @@ $(EXECD): $(DOBJS)
 	@echo "Done."
 
 clean:
-	-rm $(EXEC) $(EXECD) $(OBJDIR)/*.d $(OBJDIR)/*.debug $(OBJDIR)/*.o gmon.out graph_test;
-
-TESTSRC = graph_test.cpp graph.cpp graph_utils.cpp graph_order.cpp
-TESTOBJS = $(addprefix $(OBJDIR)/,$(TESTSRC:.cpp=.debug))
-test: $(TESTOBJS)
-	$(CC) $(STD) $(FORMAT) -o graph_test -pg $(TESTOBJS)
+	-rm $(EXEC) $(EXECD) $(OBJDIR)/*.d $(OBJDIR)/*.debug $(OBJDIR)/*.o gmon.out
 
 include $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.d))
 

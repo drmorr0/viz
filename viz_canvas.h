@@ -14,6 +14,7 @@
 #include <graph.h>
 using graph::Graph;
 
+#include <vector>
 #include <map>
 #include <gtkmm.h>
 
@@ -25,6 +26,10 @@ class VizCanvas : public Gtk::DrawingArea
 {
 public:
 	VizCanvas(Graph* graph);
+
+	void showAll();
+	void hide(const std::vector<int>& toHide);
+	const Graph* graph() const { return mGraph; }
 
 private:
 	unique_ptr<Scene> mScene;

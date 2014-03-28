@@ -25,7 +25,7 @@ public:
 	virtual ~SceneObject() { };
 
 	int id() { return mId; }
-	int state() { return mState; }
+	int& state() { return mState; }
 
 	virtual bool contains(const Vector2D& pt) = 0;
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
@@ -48,7 +48,7 @@ public:
 
 	int addObject(SceneObject* obj); 
 	std::vector<SceneObject*> findObjects(const Vector2D& pt);
-	SceneObject* const get(int id) const;
+	SceneObject* get(int id) const;
 
 	void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
 

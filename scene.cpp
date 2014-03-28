@@ -32,7 +32,7 @@ vector<SceneObject*> Scene::findObjects(const Vector2D& pt)
 	return objs;
 }
 
-SceneObject* const Scene::get(int id) const
+SceneObject* Scene::get(int id) const
 {
 	if (mObjects.count(id) == 0) return nullptr;
 	else return mObjects.find(id)->second;
@@ -41,7 +41,10 @@ SceneObject* const Scene::get(int id) const
 void Scene::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
 {
 	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
-		i->second->render(ctx, canvOffset, zoom);
+	{
+		if (i->second->state() & VISIBLE)
+			i->second->render(ctx, canvOffset, zoom);
+	}
 }
 
 

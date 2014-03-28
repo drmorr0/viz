@@ -20,7 +20,6 @@ public:
 	void createTab(const char* tabName, const Graph& tabContents);
 	
 private:
-	std::vector<Graph*> mTabContents;
 	VizCmdPrompt* mPrompt;
 
 public:

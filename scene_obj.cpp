@@ -10,7 +10,7 @@ VertexSceneObject::VertexSceneObject(double x, double y, double radius) :
 }
 
 VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius) :
-	SceneObject(MOVABLE),
+	SceneObject(MOVABLE | VISIBLE),
 	mCenter(center),
 	mRadius(radius)
 {
@@ -39,7 +39,7 @@ void VertexSceneObject::move(const Vector2D& delta)
 }
 
 EdgeSceneObject::EdgeSceneObject(int tailId, int headId) :
-	SceneObject(0),
+	SceneObject(VISIBLE),
 	mTailId(tailId),
 	mHeadId(headId)
 {
@@ -55,6 +55,10 @@ void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset
 {
 	VertexSceneObject* headObj = (VertexSceneObject*)mParentScene->get(mHeadId);
 	VertexSceneObject* tailObj = (VertexSceneObject*)mParentScene->get(mTailId);
+
+	if ((headObj->state() & VISIBLE) != VISIBLE || 
+		(tailObj->state() & VISIBLE) != VISIBLE) 
+		return;
 
 	Vector2D headCanvPos = canvOffset + zoom * headObj->getPos();
 	double headCanvRadius = zoom * headObj->getRadius();

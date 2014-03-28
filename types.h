@@ -24,7 +24,10 @@ typedef Cairo::RefPtr<Cairo::Context> CairoContext;
 typedef unique_ptr<Gtk::Widget> GtkWidgetPtr;
 typedef unique_ptr<graph::Graph> GraphPtr;
 
-const int MOVABLE = 1 << 0;
+enum MatchOp { Less, LessEq, Eq, NotEq, GreaterEq, Greater };
+
+const int VISIBLE = 1 << 0;
+const int MOVABLE = 1 << 1;
 
 #endif // TYPES_H
 

@@ -5,7 +5,7 @@
 #include "scene.h"
 #include "scene_obj.h"
 #include "more_graph_utils.h"
-#include "util.h"
+#include "builder.h"
 
 #include <graph_layout.h>
 
@@ -46,6 +46,20 @@ VizCanvas::VizCanvas(Graph* graph) :
 	for (auto tail = mGraph->begin(); tail != mGraph->end(); ++tail)
 		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
 			mScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
+}
+
+void VizCanvas::showAll()
+{
+	for (auto v = mGraph->begin(); v != mGraph->end(); ++v)
+		mScene->get(toSceneID(v->first))->state() |= VISIBLE;
+	queue_draw();
+}
+
+void VizCanvas::hide(const vector<int>& toHide)
+{
+	for (int i = 0; i < toHide.size(); ++i)
+		mScene->get(toSceneID(toHide[i]))->state() &= ~VISIBLE;
+	queue_draw();
 }
 
 /**** EVENT HANDLERS *****/
