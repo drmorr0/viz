@@ -50,6 +50,8 @@ void VizCmdPrompt::parseCommand()
 	if      (cmd == "filter") status = filter(token, tok.end());
 	else if (cmd == "format") status = format(token, tok.end());
 	else if (cmd == "clear")  status = clear(token, tok.end());
+	else if (cmd == "quit")   Gtk::Main::quit();
+	else if (cmd == "exit")   Gtk::Main::quit();
 
 	if (!status) displayMessage("---Invalid command---", Error);
 

@@ -26,13 +26,14 @@ int main(int argc, char* argv[])
 
 	vector<Graph> testGraph = { readJsonTree(filename), readJsonTree(filename) };
 
-	auto app = Gtk::Application::create(argc, argv, "testing.app", 
-			Gio::APPLICATION_HANDLES_COMMAND_LINE);
+	Gtk::Main kit(argc, argv);
 
 	VizWindow* mainWindow = new VizWindow();
 	mainWindow->createTab(filename, testGraph[0]);
 
-	return app->run(*mainWindow);
+	Gtk::Main::run(*mainWindow);
+
+	return 0;
 }
 
 const char* parseOpts(int argc, char* argv[], opts& options)
