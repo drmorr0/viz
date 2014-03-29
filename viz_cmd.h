@@ -10,18 +10,23 @@
 #include <boost/tokenizer.hpp>
 typedef boost::tokenizer<boost::escaped_list_separator<char>>::iterator tok_iter;
 
+#include <gtkmm.h>
+
 class VizCanvas;
 
 class VizCmdPrompt
 {
+	enum DisplayStatus { Normal, Info, Warning, Error };
 public:
 	VizCmdPrompt();
 
 	void parseCommand();
-	void displayMessage(const string& text);
+	void displayMessage(const string& text, DisplayStatus = Normal);
 
 private:
-	void clear(tok_iter& token);
-	void filter(tok_iter& token);
-	void format(tok_iter& token);
+	bool clear(tok_iter& token, const tok_iter& end);
+	bool filter(tok_iter& token, const tok_iter& end);
+	bool format(tok_iter& token, const tok_iter& end);
+
+	void refreshOutput(Gtk::Allocation& a);
 };

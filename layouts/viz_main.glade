@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkTextBuffer" id="textbuffer1">
+    <property name="text" translatable="yes">Welcome to Viz!</property>
+  </object>
   <object class="GtkGrid" id="viz_main_grid">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -236,8 +239,10 @@
         <property name="can_focus">True</property>
         <property name="has_focus">True</property>
         <property name="invisible_char">•</property>
-        <property name="xalign">0.0099999997764825821</property>
         <property name="shadow_type">out</property>
+        <property name="primary_icon_stock">gtk-media-forward</property>
+        <property name="primary_icon_activatable">False</property>
+        <property name="primary_icon_sensitive">False</property>
       </object>
       <packing>
         <property name="left_attach">0</property>
@@ -247,12 +252,20 @@
       </packing>
     </child>
     <child>
-      <object class="GtkTextView" id="viz_cmd_output">
+      <object class="GtkScrolledWindow" id="viz_cmd_scroll">
         <property name="height_request">100</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="editable">False</property>
-        <property name="cursor_visible">False</property>
+        <property name="shadow_type">etched-in</property>
+        <child>
+          <object class="GtkTextView" id="viz_cmd_output">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="left_margin">20</property>
+            <property name="cursor_visible">False</property>
+            <property name="buffer">textbuffer1</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="left_attach">0</property>
