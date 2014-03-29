@@ -50,7 +50,7 @@ VizCmdPrompt::VizCmdPrompt()
  *
  * filter - only show items matching the given condition
  * format - stylize items matching the given condition (TODO)
- * show - show all nodes
+ * showall - show all nodes
  * clear - clear all formatting (TODO)
  * quit, exit - terminate the program
  * help - display a short help message (TODO)
@@ -74,11 +74,15 @@ void VizCmdPrompt::parseCommand()
 	bool status = false;
 	auto token = tok.begin();
 	string cmd = trim_copy(*token++);
-	if      (cmd == "filter") status = filter(token, tok.end());
-	else if (cmd == "format") status = format(token, tok.end());
-	else if (cmd == "show")   status = show(token, tok.end());
-	else if (cmd == "quit")   Gtk::Main::quit();
-	else if (cmd == "exit")   Gtk::Main::quit();
+
+	for (int i = 0; i < num_commands; ++i)
+	{
+		if (cmd == commands[i].command)
+		{
+			status = (this->*commands[i].exec)(token, tok.end());
+			break;
+		}
+	}
 
 	// If the command could not be parsed, display an error message
 	if (!status) displayMessage("---Invalid command---", Error);
@@ -98,17 +102,6 @@ void VizCmdPrompt::displayMessage(const string& text, DisplayStatus status)
 	else if (status == Warning) buffer->insert_with_tag(ins, "\n" + text, "style_warning");
 	else if (status == Error)   buffer->insert_with_tag(ins, "\n" + text, "style_error");
 	else 						buffer->insert(ins, "\n" + text);
-}
-
-/*
- * Remove all filtering rules
- */
-bool VizCmdPrompt::show(tok_iter& token, const tok_iter& end)
-{
-	if (token != end) displayMessage(string("Ignoring extra arguments to show: ") + 
-			*token + "...", Warning);
-	TheBuilder::getCurrentTab()->showAll();
-	return true;
 }
 
 /*
@@ -163,6 +156,28 @@ bool VizCmdPrompt::filter(tok_iter& token, const tok_iter& end)
 
 bool VizCmdPrompt::format(tok_iter& token, const tok_iter& end)
 {
+	return true;
+}
+
+bool VizCmdPrompt::help(tok_iter& token, const tok_iter& end)
+{
+	return true;
+}
+
+/*
+ * Remove all filtering rules
+ */
+bool VizCmdPrompt::showall(tok_iter& token, const tok_iter& end)
+{
+	if (token != end) displayMessage(string("Ignoring extra arguments to show: ") + 
+			*token + "...", Warning);
+	TheBuilder::getCurrentTab()->showAll();
+	return true;
+}
+
+bool VizCmdPrompt::quit(tok_iter& token, const tok_iter& end)
+{
+	Gtk::Main::quit();
 	return true;
 }
 

@@ -1,3 +1,5 @@
+#ifndef VIZ_CMD_H
+#define VIZ_CMD_H
 /*
  * viz_cmd.h: David R. Morrison, March 2014
  *
@@ -20,6 +22,7 @@ typedef boost::tokenizer<boost::escaped_list_separator<char>>::iterator tok_iter
 
 #include <gtkmm.h>
 
+struct command_template;
 class VizCanvas;
 
 class VizCmdPrompt
@@ -32,9 +35,25 @@ public:
 	void displayMessage(const string& text, DisplayStatus = Normal);
 
 private:
-	bool show(tok_iter& token, const tok_iter& end);
 	bool filter(tok_iter& token, const tok_iter& end);
 	bool format(tok_iter& token, const tok_iter& end);
+	bool help(tok_iter& token, const tok_iter& end);
+	bool showall(tok_iter& token, const tok_iter& end);
+	bool quit(tok_iter& token, const tok_iter& end);
 
 	void refreshOutput(Gtk::Allocation& a);
+
+	static const command_template commands[];
+	static const int num_commands;
 };
+
+typedef bool (VizCmdPrompt::*cmdFunc)(tok_iter&, const tok_iter&);
+
+struct command_template
+{
+	const char* command;
+	const char* help;
+	cmdFunc exec;
+};
+
+#endif // VIZ_CMD_H
