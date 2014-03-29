@@ -35,16 +35,17 @@ public:
 	void displayMessage(const string& text, DisplayStatus = Normal);
 
 private:
+	void refreshOutput(Gtk::Allocation& a);
+
+	// Commands and command functions defined in viz_cmd_list.cpp
+	static const command_template commands[];
+	static const int num_commands;
+
 	bool filter(tok_iter& token, const tok_iter& end);
 	bool format(tok_iter& token, const tok_iter& end);
 	bool help(tok_iter& token, const tok_iter& end);
 	bool showall(tok_iter& token, const tok_iter& end);
 	bool quit(tok_iter& token, const tok_iter& end);
-
-	void refreshOutput(Gtk::Allocation& a);
-
-	static const command_template commands[];
-	static const int num_commands;
 };
 
 typedef bool (VizCmdPrompt::*cmdFunc)(tok_iter&, const tok_iter&);
