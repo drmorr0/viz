@@ -21,7 +21,7 @@ using namespace boost;
 const command_template VizCmdPrompt::commands[] = {
 	{ "exit", "Quit Viz", &VizCmdPrompt::quit },
 	{ "filter", "filter PropertyName Operator Value", &VizCmdPrompt::filter },
-	{ "format", "format PropertyName Operator Value FormatSpec", &VizCmdPrompt::format },
+	{ "format", "format PropertyName Operator Value Color [Radius] [Thickness]", &VizCmdPrompt::format },
 	{ "help", "Display help message", &VizCmdPrompt::help },
 	{ "showall", "Remove all filtering rules", &VizCmdPrompt::showall },
 	{ "quit", "Quit Viz", &VizCmdPrompt::quit },
@@ -84,8 +84,80 @@ bool VizCmdPrompt::filter(tok_iter& token, const tok_iter& end)
     return true;
 }
 
+/* 
+ * Stylize nodes matching the filter according to the given style specification
+ *   format Property Operator Value Color [Radius] [Thickness]
+ * where Property, Operator, and Value are the same as for filter.  Color is an  HTML color
+ * specification (#ff0000), and Radius and Thickness are optional numeric arguments that specify
+ * the radius and thickness of the matched vertices.
+ */
 bool VizCmdPrompt::format(tok_iter& token, const tok_iter& end)
 {
+	VizCanvas* canvas = TheBuilder::getCurrentTab();
+
+    // Parse the remainder of the command
+    double value; double radius = -1; double thickness = -1;
+    if (token == end) {displayMessage(string("Too few arguments to format."), Error); return false;}
+    string filterBy = trim_copy(*token++);
+    if (token == end) {displayMessage(string("Too few arguments to format."), Error); return false;}
+    string matchStr = trim_copy(*token++);
+    if (token == end) {displayMessage(string("Too few arguments to format."), Error); return false;}
+    string valStr = trim_copy(*token++);
+    if (token == end) {displayMessage(string("Too few arguments to format."), Error); return false;}
+	string colorStr = trim_copy(*token++);
+	string radStr; if (token != end) radStr = trim_copy(*token++);
+	string thickStr; if (token != end) thickStr = trim_copy(*token++);
+    if (token != end) displayMessage(string("Ignoring extra arguments to format: ") +
+            *token + "...", Warning);
+
+	// Try to convert numeric values
+    try { value = stod(valStr); }
+    catch (invalid_argument& e)
+    {
+        displayMessage(string("Invalid numeric value: ") + valStr, Error);
+        return false;
+    }
+	if (!radStr.empty())
+	{
+		try { radius = stod(radStr); if (radius < 0) throw invalid_argument("negative"); }
+		catch (invalid_argument& e)
+		{
+			displayMessage(string("Invalid numeric radius: ") + radStr, Error);
+			return false;
+		}
+	}
+	if (!thickStr.empty())
+	{
+		try { thickness = stod(thickStr); if (thickness < 0) throw invalid_argument("negative"); }
+		catch (invalid_argument& e)
+		{
+			displayMessage(string("Invalid numeric thickness: ") + thickStr, Error);
+			return false;
+		}
+	}
+
+	// Unlike filter, here we want to get the list of vertices that match the condition so that
+	// we can stylize them appropriately
+    MatchOp oper;
+    if      (matchStr == "<")  oper = Less;
+    else if (matchStr == "<=") oper = LessEq;
+    else if (matchStr == "==") oper = Eq;
+    else if (matchStr == "!=") oper = NotEq;
+    else if (matchStr == ">=") oper = GreaterEq;
+    else if (matchStr == ">")  oper = Greater;
+    else
+    {
+        displayMessage(string("Invalid operator ") + matchStr, Error);
+        return false;
+    }
+
+	// Make sure the color string is valid
+	Gdk::Color color(colorStr);
+
+    vector<int> matched = graph::match(*canvas->graph(), filterBy, oper, value);
+    if (matched.empty()) displayMessage("No matches found.", Info);
+    else canvas->format(matched, color, radius, thickness);
+
     return true;
 }
 

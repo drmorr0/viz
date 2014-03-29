@@ -67,6 +67,18 @@ void VizCanvas::hide(const vector<int>& toHide)
 	queue_draw();
 }
 
+void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color, 
+		double radius, double thickness)
+{
+	for (int i = 0; i < toFormat.size(); ++i)
+	{
+		VertexSceneObject* vertex = (VertexSceneObject*)mScene->get(toSceneID(toFormat[i]));
+		vertex->setColor(color);
+		if (radius >= 0) vertex->setRadius(radius);
+		if (thickness >= 0) vertex->setThickness(thickness);
+	}
+	queue_draw();
+}
 /**** EVENT HANDLERS *****/
 
 /*

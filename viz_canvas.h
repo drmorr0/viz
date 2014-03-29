@@ -14,6 +14,7 @@
 #include <graph.h>
 using graph::Graph;
 
+#include <string>
 #include <vector>
 #include <map>
 #include <gtkmm.h>
@@ -29,6 +30,8 @@ public:
 
 	void showAll();
 	void hide(const std::vector<int>& toHide);
+	void format(const std::vector<int>& toFormat, const Gdk::Color& color, 
+			double radius, double thickness);
 	const Graph* graph() const { return mGraph; }
 
 private:

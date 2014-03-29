@@ -3,16 +3,20 @@
 
 #include "scene_obj.h"
 
-VertexSceneObject::VertexSceneObject(double x, double y, double radius) :
-	VertexSceneObject(Vector2D(x, y), radius)
+VertexSceneObject::VertexSceneObject(double x, double y, double radius, double thickness,
+		const Gdk::Color& color) :
+	VertexSceneObject(Vector2D(x, y), radius, thickness, color)
 {
 	/* Do nothing */
 }
 
-VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius) :
+VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius, double thickness,
+		const Gdk::Color& color) :
 	SceneObject(MOVABLE | VISIBLE),
 	mCenter(center),
-	mRadius(radius)
+	mRadius(radius),
+	mThickness(thickness),
+	mColor(color)
 {
 	/* Do nothing */
 }
@@ -29,8 +33,12 @@ void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffs
 	double canvRadius = zoom * mRadius;
 
 	// Draw a circle for the node
+	ctx->save();
+	ctx->set_source_rgb(mColor.get_red_p(), mColor.get_green_p(), mColor.get_blue_p());
+	ctx->set_line_width(mThickness);
 	ctx->arc(canvPos.x, canvPos.y, canvRadius, 0, 2 * M_PI);
 	ctx->stroke();
+	ctx->restore();
 }
 
 void VertexSceneObject::move(const Vector2D& delta)
@@ -69,21 +77,35 @@ void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset
 
 	// The canvas position of the endpoints is the absolute position, adjusted by the current zoom
 	// level and the current offset of the canvas.  We can compute a vector that connects the
-	// centers of the two endpoints by subtracting one from the other
+	// centers of the two endpoints by subtracting one from the other.  
 	Vector2D headCanvPos = canvOffset + zoom * headObj->getPos();
-	double headCanvRadius = zoom * headObj->getRadius();
 	Vector2D tailCanvPos = canvOffset + zoom * tailObj->getPos();
-	double tailCanvRadius = zoom * tailObj->getRadius();
 	Vector2D connector = tailCanvPos - headCanvPos;
 	normalize(connector); 
+	
+	// The actual radius of the objects needs to consider both the radius and the thickness of the
+	// stroke.  We divide by 2 because the stroke starts at the center and goes out equally in both
+	// directions
+	double headCanvRadius = zoom * (headObj->getRadius() + headObj->getThickness() / 2);
+	double tailCanvRadius = zoom * (tailObj->getRadius() + tailObj->getThickness() / 2);
 
 	// The normalized connection vector can then be multiplied by the radius of the nodes to get the
 	// start and end positions where we should be drawing
-	Vector2D edgeStart = headCanvRadius * connector;
-	Vector2D edgeEnd = -1 * tailCanvRadius * connector;
+	Vector2D edgeStart = -1 * tailCanvRadius * connector;
+	Vector2D edgeEnd = headCanvRadius * connector;
 
-	ctx->move_to(headCanvPos.x + edgeStart.x, headCanvPos.y + edgeStart.y);
-	ctx->line_to(tailCanvPos.x + edgeEnd.x, tailCanvPos.y + edgeEnd.y);
+	ctx->save();
+	auto gradient = Cairo::LinearGradient::create(tailCanvPos.x + edgeStart.x, 
+												  tailCanvPos.y + edgeStart.y,
+												  headCanvPos.x + edgeEnd.x,
+												  headCanvPos.y + edgeEnd.y);
+	Gdk::Color tColor = tailObj->getColor(); Gdk::Color hColor = headObj->getColor();
+	gradient->add_color_stop_rgb(0, tColor.get_red_p(), tColor.get_green_p(), tColor.get_blue_p());
+	gradient->add_color_stop_rgb(1, hColor.get_red_p(), hColor.get_green_p(), hColor.get_blue_p());
+	ctx->set_source(gradient);
+	ctx->move_to(tailCanvPos.x + edgeStart.x, tailCanvPos.y + edgeStart.y);
+	ctx->line_to(headCanvPos.x + edgeEnd.x, headCanvPos.y + edgeEnd.y);
 	ctx->stroke();
+	ctx->restore();
 }
 
