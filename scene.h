@@ -24,7 +24,7 @@ public:
 	SceneObject(int state) : mState(state) { };
 	virtual ~SceneObject() { };
 
-	int id() { return mId; }
+	int id() const { return mId; }
 	int& state() { return mState; }
 
 	virtual bool contains(const Vector2D& pt) = 0;
@@ -47,10 +47,11 @@ public:
 	~Scene();
 
 	int addObject(SceneObject* obj); 
-	std::vector<SceneObject*> findObjects(const Vector2D& pt);
+	std::vector<SceneObject*> findObjects(const Vector2D& pt) const;
 	SceneObject* get(int id) const;
 
 	void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
+	void showAll();
 
 private:
 	// Disable copy/assignment of Scenes for right now (TODO)

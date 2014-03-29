@@ -48,13 +48,18 @@ VizCanvas::VizCanvas(Graph* graph) :
 			mScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
 }
 
+/* 
+ * Mark all objects in the scene graph as visible, and then redraw
+ */
 void VizCanvas::showAll()
 {
-	for (auto v = mGraph->begin(); v != mGraph->end(); ++v)
-		mScene->get(toSceneID(v->first))->state() |= VISIBLE;
+	mScene->showAll();
 	queue_draw();
 }
 
+/*
+ * Mark the specified vertices as invisible, and then redraw
+ */
 void VizCanvas::hide(const vector<int>& toHide)
 {
 	for (int i = 0; i < toHide.size(); ++i)

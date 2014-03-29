@@ -4,6 +4,9 @@
 #include "builder.h"
 #include "viz_canvas.h"
 
+/*
+ * Returns the currently-selected tab of the interface.  TODO this will break if there are no tabs
+ */
 VizCanvas* TheBuilder::getCurrentTab()
 {
 	Gtk::Notebook* tabs = get<Gtk::Notebook>("viz_tabs");

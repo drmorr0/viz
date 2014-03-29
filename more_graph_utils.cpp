@@ -31,21 +31,28 @@ vector<int> getReachable(const Graph& g, const vector<int>& start)
 	return reachable;
 }
 
+/*
+ * Loop through all vertices of the specified graph and return a list of the ones that match
+ * the specified rule.  I'm not exactly sure how efficient this is going to be for large graphs...
+ */
 vector<int> match(const Graph& g, const string& filterText, MatchOp op, double value)
 {
 	vector<int> matched;
 	for (auto v = g.begin(); v != g.end(); ++v)
 	{
 		BnbVertexData* data = (BnbVertexData*)g.vertexData(v->first);
-		if (!data) continue;
+		if (!data) continue;	// If a vertex has no data associated, skip it
 
 		for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 		{
+			// Check to see if the property contains the specified filter text.  Right now it must
+			// match exactly, though being able to do something like a regex might be cool...
 			if (prop->first.find(filterText) != string::npos)
 			{
 				double propVal;
 				try { propVal = stod(prop->second); } catch (invalid_argument& e) { continue; }
 
+				// How to handle non-numeric properties? TODO
 				if ((op == Less 	 && propVal <  value) ||
 					(op == LessEq	 && propVal <= value) ||
 					(op == Eq		 && propVal == value) ||

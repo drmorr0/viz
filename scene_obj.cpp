@@ -51,15 +51,25 @@ bool EdgeSceneObject::contains(const Vector2D& pt)
 	return false; // TODO
 }
 
+/* 
+ * Render an edge of the graph; edges are always attached to two vertices, and we want to draw a
+ * line from the center of one vertex to the center of the other, but we want to take into account
+ * the radius of the vertex.  We need to do a bit of vector math here to make this work right
+ */
 void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
 {
+	// Get the Scene ids of the two endpoints
 	VertexSceneObject* headObj = (VertexSceneObject*)mParentScene->get(mHeadId);
 	VertexSceneObject* tailObj = (VertexSceneObject*)mParentScene->get(mTailId);
 
+	// Only draw an edge if both endpoints are marked as visible
 	if ((headObj->state() & VISIBLE) != VISIBLE || 
 		(tailObj->state() & VISIBLE) != VISIBLE) 
 		return;
 
+	// The canvas position of the endpoints is the absolute position, adjusted by the current zoom
+	// level and the current offset of the canvas.  We can compute a vector that connects the
+	// centers of the two endpoints by subtracting one from the other
 	Vector2D headCanvPos = canvOffset + zoom * headObj->getPos();
 	double headCanvRadius = zoom * headObj->getRadius();
 	Vector2D tailCanvPos = canvOffset + zoom * tailObj->getPos();
@@ -67,6 +77,8 @@ void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset
 	Vector2D connector = tailCanvPos - headCanvPos;
 	normalize(connector); 
 
+	// The normalized connection vector can then be multiplied by the radius of the nodes to get the
+	// start and end positions where we should be drawing
 	Vector2D edgeStart = headCanvRadius * connector;
 	Vector2D edgeEnd = -1 * tailCanvRadius * connector;
 

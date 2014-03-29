@@ -3,7 +3,8 @@
 /*
  * builder.h: David R. Morrison, March 2014
  *
- * Static interface to the Gtk::Builder class
+ * Static interface to the Gtk::Builder class; this class will also include methods for retrieving
+ * commonly-used widgets (for example, the currently-selected tab)
  */
 
 #include <gtkmm.h>
@@ -30,6 +31,7 @@ private:
 	}
 };
 
+// Get a widget with a specified type
 template<typename T>
 T* TheBuilder::get(const char* name)
 {

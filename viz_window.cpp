@@ -24,6 +24,9 @@ VizWindow::~VizWindow()
 	delete mPrompt;
 }
 
+/*
+ * Create a new tab and add it to the notebook.
+ */
 void VizWindow::createTab(const char* tabName, const Graph& tabContents)
 {
 	Gtk::Notebook* vizTabs = TheBuilder::get<Gtk::Notebook>("viz_tabs");

@@ -1,5 +1,11 @@
 #ifndef VIZ_WINDOW_H
 #define VIZ_WINDOW_H
+/*
+ * viz_window.h: David R. Morrison, March 2014
+ *
+ * Top-level window class for Viz.  This class manages all of the other custom widgets, event
+ * handlers, and the like, that are needed in order for the program to run
+ */
 
 #include "types.h"
 
