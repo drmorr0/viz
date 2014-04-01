@@ -58,19 +58,19 @@ Graph readJsonTree(const char* filename)
 		if (nodeId == -1) continue; // Every JSON line MUST specify a node_id to be parsed
 
 		// Set up the vertex data struct for the current node if one doesn't already exist
-		BnbVertexData* nodeData;
+		graph::VertexData* nodeData;
 		if (g.vertexData(nodeId))
-			nodeData = (BnbVertexData*) g.vertexData(nodeId);
-		else nodeData = (BnbVertexData*) g.setVertexData(nodeId, new BnbVertexData);
+			nodeData = g.vertexData(nodeId);
+		else nodeData = g.setVertexData(nodeId, new graph::VertexData);
 
 		// Add an edge to the child node, and set up its vertex data, if it doesn't already exist
-		BnbVertexData* childData;
+		graph::VertexData* childData;
 		if (child != -1) 
 		{
 			g.addEdge(nodeId, child);
 			if (g.vertexData(child)) 
-				childData = (BnbVertexData*) g.vertexData(child);
-			else childData = (BnbVertexData*) g.setVertexData(child, new BnbVertexData);
+				childData = g.vertexData(child);
+			else childData = g.setVertexData(child, new graph::VertexData);
 		}
 
 		// Fill in the current node vertex data

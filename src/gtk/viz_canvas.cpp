@@ -148,7 +148,7 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 		{
 			int gid = toGraphID(selected[0]->id());
 			string info = "Subproblem ID: " + to_string(gid) + "\n";
-			BnbVertexData* data = (BnbVertexData*)mGraph->vertexData(gid);
+			graph::VertexData* data = mGraph->vertexData(gid);
 			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 				info += prop->first + ": " + prop->second + "\n";
 			
