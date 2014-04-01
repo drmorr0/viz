@@ -1,0 +1,50 @@
+Welcome to Viz! The visualization software.
+
+This software copyright (c) David R. Morrison, 2014.  
+See the accompanying LICENSE file for details.
+
+This software is under active development.  Expecting backwards 
+compatibility, or relying on any specific feature that may or may not
+exist in the current version you are using is a little crazy.  I am 
+attempting to keep this README file up-to-date with relevent information
+and requirements, but I'm certainly not making any promises about that.
+If you have questions, or something doesn't seem to be working the way
+you think it should, the best thing to do is send me a note.
+
+Requirements
+------------
+ * cmake (for generating the build process)
+ * gtkmm-3.0 (and all dev files)
+ * cairomm-3.0 (and all dev files)
+ * JSON spirit (available at
+		http://www.codeproject.com/Articles/20027/JSON-Spirit-A-C-JSON-Parser-Generator-Implemented)
+ * The most recent version of graph-lib (available at 
+		https://github.com/drmorr0/graph-lib)
+
+Compilation Instructions
+------------------------
+To compile this source code on Linux:
+
+1) Enter the build directory
+2) Type 'cmake ..', and then type 'make'
+	* If you want to build a debug version of this code, you will need 
+	  to run cmake with the following option: -DCMAKE_BUILD_TYPE=debug
+
+To compile this source code under Windows:
+
+  You're on your own right now.  I'm hoping to eventually support 
+  Windows, and I'm trying to avoid making any platform-specific code, 
+  but my bigger priority at present is to get cool features implemented.
+
+Running Instructions
+--------------------
+There are sample input files contained in the 'inputs' subdirectory.  
+For example, try running
+	viz input/test.json
+
+Then try typing the following in the program's command prompt:
+	filter Contour <= 7
+	format Contour == 3 blue
+You can find more information about available commands by typing help
+
+

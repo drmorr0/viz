@@ -26,7 +26,7 @@ private:
 	static Glib::RefPtr<Gtk::Builder> getBuilder()
 	{
 		static Glib::RefPtr<Gtk::Builder> builder;
-		if (!builder) builder = Gtk::Builder::create_from_file("layouts/viz_main.glade");
+		if (!builder) builder = Gtk::Builder::create_from_file("../layouts/viz_main.glade");
 		return builder;
 	}
 };

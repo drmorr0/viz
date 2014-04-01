@@ -25,5 +25,11 @@ gmon.out
 # Miscellaneous
 .svn
 
+# Ignore Cmake output files
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+
 # Put your stuff here
-gviz
+viz
