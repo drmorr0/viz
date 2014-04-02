@@ -10,9 +10,6 @@
 using namespace std;
 using namespace boost;
 
-/*
- * Display a general help string, or provide more input for a specific command
- */
 HelpCommand::HelpCommand() :
 	Command("Display help mesage")
 {

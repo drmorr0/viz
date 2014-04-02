@@ -21,6 +21,10 @@ enum MatchOp { Less, LessEq, Eq, NotEq, GreaterEq, Greater };
 const int VISIBLE = 1 << 0;
 const int MOVABLE = 1 << 1;
 
+// Sigh... boost...
+#include <boost/tokenizer.hpp>
+typedef boost::tokenizer<boost::escaped_list_separator<char>>::iterator tok_iter;
+
 #endif // TYPES_H
 
 

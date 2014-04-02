@@ -1,8 +1,5 @@
 /*
  * David R. Morrison, March 2014
- *
- * List of commands supported by the Viz command prompt, along with a help string and a pointer to
- * the function that should be called when the command is entered
  */
 
 #include "show.h"
@@ -15,9 +12,6 @@
 #include <string>
 using namespace std;
 
-/*
- * Remove all filtering rules
- */
 ShowCommand::ShowCommand() :
 	Command("Remove all filtering rules")
 {

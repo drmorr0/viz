@@ -8,6 +8,7 @@
 #include "format.h"
 #include "help.h"
 #include "hide.h"
+#include "load.h"
 #include "show.h"
 #include "quit.h"
 
@@ -56,6 +57,7 @@ void init()
 	CommandManager::registerCommand("format", FormatCommand());
 	CommandManager::registerCommand("help", HelpCommand());
 	CommandManager::registerCommand("hide", HideCommand());
+	CommandManager::registerCommand("load", LoadCommand());
 	CommandManager::registerCommand("show", ShowCommand());
 	CommandManager::registerCommand("quit", QuitCommand());
 }
@@ -80,9 +82,11 @@ void parseCommand()
 
 	// Parse the command
 	auto token = tok.begin();
-	string cmd = trim_copy(*token++);
+	string cmdStr = trim_copy(*token++);
 
-	bool status = (*CommandManager::get(cmd))(token, tok.end());
+	bool status = false;
+	Command* cmd = CommandManager::get(cmdStr);
+	if (cmd) status = (*cmd)(token, tok.end());
 
 	// If the command could not be parsed, display an error message
 	if (!status) displayMessage("---Invalid command---", Error);

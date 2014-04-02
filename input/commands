@@ -1,0 +1,10 @@
+% This is a test of the Viz script-loading interface.  Comments should be ignored
+% Note to users: the format of this file may change without notice
+
+show
+hide Contour <= 7
+format Contour == 8 blue
+format Contour == 9 red 20 3
+format Contour > 9 #00ff00
+asdf
+hide Contour == 10

@@ -16,12 +16,6 @@
 using namespace std;
 using namespace boost;
 
-/*
- * Only show nodes matching the specified filter.  The syntax for this command is
- *   filter Property Operator Value
- * where Property is any stored property of the graph, Operator is one of <,<=,==,!=,>=,>, and
- * Value is a numeric constant.
- */
 HideCommand::HideCommand() :
 	Command("hide PropertyName Operator Value")
 {

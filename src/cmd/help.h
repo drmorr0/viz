@@ -2,6 +2,8 @@
 #define HELP_H
 /*
  * David R. Morrison, April 2014
+ *
+ * Display a general help string, or provide more input for a specific command
  */
 
 #include "cmd.h"

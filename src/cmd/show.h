@@ -2,6 +2,8 @@
 #define SHOW_H
 /*
  * David R. Morrison, April 2014
+ *
+ * Remove all filtering rules
  */
 
 #include "cmd.h"

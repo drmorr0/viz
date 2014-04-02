@@ -2,6 +2,8 @@
 #define QUIT_H
 /*
  * David R. Morrison, April 2014
+ *
+ * Quit the program
  */
 
 #include "cmd.h"
