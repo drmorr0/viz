@@ -14,7 +14,7 @@ set(VIZ_CODE_DIR "${VIZ_SOURCE_DIR}/src")
 # Custom include directories
 include_directories(
 	"${VIZ_CODE_DIR}"
-	"${VIZ_CODE_DIR}/events"
+	"${VIZ_CODE_DIR}/cmd"
 	"${VIZ_CODE_DIR}/gtk"
 	"${VIZ_CODE_DIR}/io"
 	"${VIZ_CODE_DIR}/scene"
@@ -24,9 +24,14 @@ include_directories(
 # Set the name of the executable output with source file dependencies
 add_executable(viz
 	"${VIZ_CODE_DIR}/main.cpp"
-	"${VIZ_CODE_DIR}/events/viz_cmd.cpp"
-	"${VIZ_CODE_DIR}/events/viz_cmd_list.cpp"
+	"${VIZ_CODE_DIR}/cmd/cmd.cpp"
+	"${VIZ_CODE_DIR}/cmd/format.cpp"
+	"${VIZ_CODE_DIR}/cmd/hide.cpp"
+	"${VIZ_CODE_DIR}/cmd/help.cpp"
+	"${VIZ_CODE_DIR}/cmd/show.cpp"
+	"${VIZ_CODE_DIR}/cmd/quit.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_canvas.cpp"
+	"${VIZ_CODE_DIR}/gtk/viz_prompt.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_window.cpp"
 	"${VIZ_CODE_DIR}/io/viz_io.cpp"
 	"${VIZ_CODE_DIR}/scene/scene.cpp"

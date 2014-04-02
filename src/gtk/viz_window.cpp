@@ -3,7 +3,7 @@
 
 #include "viz_window.h"
 #include "viz_canvas.h"
-#include "viz_cmd.h"
+#include "viz_prompt.h"
 #include "scene_obj.h"
 #include "builder.h"
 
@@ -12,16 +12,11 @@
 using namespace std;
 
 VizWindow::VizWindow(Gtk::WindowType wt) :
-	Gtk::Window(wt),
-	mPrompt(new VizCmdPrompt)
+	Gtk::Window(wt)
 {
+	VizPrompt::init();
 	maximize();
 	add(*TheBuilder::get("viz_main_grid"));
-}
-
-VizWindow::~VizWindow()
-{
-	delete mPrompt;
 }
 
 /*

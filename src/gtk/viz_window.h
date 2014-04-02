@@ -15,19 +15,15 @@ using graph::Graph;
 #include <vector>
 #include <gtkmm.h>
 
-class VizCmdPrompt;
-
 class VizWindow : public Gtk::Window
 {
 public:
 	VizWindow(Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
-	~VizWindow();
 	
 	void createTab(const char* tabName, const Graph& tabContents);
-	
-private:
-	VizCmdPrompt* mPrompt;
 
+private:
+	
 public:
 	// Disable copy/assignment for now
 	VizWindow(const VizWindow&) = delete;

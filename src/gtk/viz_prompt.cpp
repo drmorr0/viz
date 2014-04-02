@@ -1,8 +1,15 @@
-// viz_cmd.cpp: David R. Morrison, March 2014
-// Implementation for the viz command prompt
+// viz_prompt.cpp: David R. Morrison, March 2014
+// Implementation functions for the viz command prompt
 
-#include "viz_cmd.h"
+#include "viz_prompt.h"
 #include "builder.h"
+
+#include "cmd.h"
+#include "format.h"
+#include "help.h"
+#include "hide.h"
+#include "show.h"
+#include "quit.h"
 
 #include <string>
 #include <iostream>
@@ -12,12 +19,20 @@
 using namespace std;
 using namespace boost;
 
-VizCmdPrompt::VizCmdPrompt()
+namespace VizPrompt
 {
 
+// Scroll to the bottom of the output panel
+void refreshOutput(Gtk::Allocation& a)
+{
+	auto adj = TheBuilder::get<Gtk::ScrolledWindow>("viz_cmd_scroll")->get_vadjustment();
+	adj->set_value(adj->get_upper());
+}
+
+void init()
+{
 	// Set up an event handler when the command prompt has focus and the user presses enter
-	TheBuilder::get<Gtk::Entry>("viz_cmd_prompt")->signal_activate().connect(
-			sigc::mem_fun(*this, &VizCmdPrompt::parseCommand));
+	TheBuilder::get<Gtk::Entry>("viz_cmd_prompt")->signal_activate().connect(&parseCommand);
 
 	// Create some formatting styles -- we may want to create these elsewhere if 
 	// we plan to use them for multiple buffers (TODO)
@@ -34,26 +49,21 @@ VizCmdPrompt::VizCmdPrompt()
 
 	// When the output window size is allocated, then scroll to the bottom of the output window
 	// Necessary because the new size might not be computed until a redraw
-	output->signal_size_allocate().connect(sigc::mem_fun(*this, &VizCmdPrompt::refreshOutput));
+	output->signal_size_allocate().connect(&refreshOutput);
+
+	// Register commands accepted by the prompt
+	CommandManager::registerCommand("exit", QuitCommand());
+	CommandManager::registerCommand("format", FormatCommand());
+	CommandManager::registerCommand("help", HelpCommand());
+	CommandManager::registerCommand("hide", HideCommand());
+	CommandManager::registerCommand("show", ShowCommand());
+	CommandManager::registerCommand("quit", QuitCommand());
 }
 
 /*
  * Parse a command that is typed into the command prompt
- *
- * Currently, we handle each command separately; however, we'll want to eventually create
- * documentation for the various commands, and make it easier to extend so this will probably need
- * to be rethought (TODO)
- *
- * Supported commands:
- *
- * filter - only show items matching the given condition
- * format - stylize items matching the given condition (TODO)
- * showall - show all nodes
- * clear - clear all formatting (TODO)
- * quit, exit - terminate the program
- * help - display a short help message (TODO)
  */
-void VizCmdPrompt::parseCommand()
+void parseCommand()
 {
 	string str = TheBuilder::get<Gtk::Entry>("viz_cmd_prompt")->get_text();
 	
@@ -69,28 +79,20 @@ void VizCmdPrompt::parseCommand()
 	TheBuilder::get<Gtk::Entry>("viz_cmd_prompt")->set_text("");
 
 	// Parse the command
-	bool status = false;
 	auto token = tok.begin();
 	string cmd = trim_copy(*token++);
 
-	for (int i = 0; i < num_commands; ++i)
-	{
-		if (cmd == commands[i].command)
-		{
-			status = (this->*commands[i].exec)(token, tok.end());
-			break;
-		}
-	}
+	bool status = (*CommandManager::get(cmd))(token, tok.end());
 
 	// If the command could not be parsed, display an error message
 	if (!status) displayMessage("---Invalid command---", Error);
-
 }
 
 /*
  * Display a message in the output pane
  */
-void VizCmdPrompt::displayMessage(const string& text, DisplayStatus status)
+void displayError(const string& text) { displayMessage(text, Error); }
+void displayMessage(const string& text, DisplayStatus status)
 {
 	auto buffer = TheBuilder::get<Gtk::TextView>("viz_cmd_output")->get_buffer();
 	auto ins = buffer->end();
@@ -102,9 +104,4 @@ void VizCmdPrompt::displayMessage(const string& text, DisplayStatus status)
 	else 						buffer->insert(ins, "\n" + text);
 }
 
-// Scroll to the bottom of the output panel
-void VizCmdPrompt::refreshOutput(Gtk::Allocation& a)
-{
-	auto adj = TheBuilder::get<Gtk::ScrolledWindow>("viz_cmd_scroll")->get_vadjustment();
-	adj->set_value(adj->get_upper());
-}
+}; // namespace VizPrompt
