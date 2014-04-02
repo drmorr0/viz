@@ -8,14 +8,13 @@
 #include <graph.h>
 #include <json_spirit.h>
 #include <fstream>
-#include <string>
 
 using namespace std;
 namespace json = json_spirit;
 using graph::Graph;
 
 // Read in a sample graph from a JSON file (this is still in flux)
-Graph readJsonTree(const char* filename)
+Graph readJsonTree(const string& filename)
 {
 	Graph g(graph::SimpleDirected);
 	ifstream input(filename);
@@ -58,13 +57,13 @@ Graph readJsonTree(const char* filename)
 		if (nodeId == -1) continue; // Every JSON line MUST specify a node_id to be parsed
 
 		// Set up the vertex data struct for the current node if one doesn't already exist
-		graph::VertexData* nodeData;
+		graph::VertexData* nodeData = nullptr;
 		if (g.vertexData(nodeId))
 			nodeData = g.vertexData(nodeId);
 		else nodeData = g.setVertexData(nodeId, new graph::VertexData);
 
 		// Add an edge to the child node, and set up its vertex data, if it doesn't already exist
-		graph::VertexData* childData;
+		graph::VertexData* childData = nullptr;
 		if (child != -1) 
 		{
 			g.addEdge(nodeId, child);
@@ -95,7 +94,10 @@ Graph readJsonTree(const char* filename)
 		if (estimate != -1)		  
 			childData->properties["Node estimate"] = to_string(estimate);
 		if (contour != MaxInt)		  
-			childData->properties["Contour label"] = to_string(contour);
+		{
+			if (childData) childData->properties["Contour label"] = to_string(contour);
+			else if (nodeData) nodeData->properties["Contour label"] = to_string(contour);
+		}
 
 	}
 	return g;

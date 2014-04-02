@@ -20,7 +20,7 @@ public:
 	Command* clone() const { return new LoadCommand(*this); }
 	bool operator()(tok_iter& token, const tok_iter& end);
 
-private:
+	// Subcommands
 	bool loadGraph(const std::string& filename);
 	bool loadScript(const std::string& filename);
 };

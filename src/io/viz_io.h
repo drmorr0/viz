@@ -6,10 +6,12 @@
  * Functions for input and output for the visualization software
  */
 
+#include <string>
+
 #include <graph.h>
 using graph::Graph;
 
-Graph readJsonTree(const char* filename);
+Graph readJsonTree(const std::string& filename);
 
 #endif // VIZ_IO_H 
 

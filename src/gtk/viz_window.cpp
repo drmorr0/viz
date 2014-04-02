@@ -22,7 +22,7 @@ VizWindow::VizWindow(Gtk::WindowType wt) :
 /*
  * Create a new tab and add it to the notebook.
  */
-void VizWindow::createTab(const char* tabName, const Graph& tabContents)
+void VizWindow::createTab(const string& tabName, const Graph& tabContents)
 {
 	Gtk::Notebook* vizTabs = TheBuilder::get<Gtk::Notebook>("viz_tabs");
 
@@ -31,6 +31,9 @@ void VizWindow::createTab(const char* tabName, const Graph& tabContents)
 	vizTabs->append_page(*newTab, tabName);
 	newTab->add(*tabCanvas);
 	newTab->show_all();
+
+	// Negative numbers set to the last page
+	vizTabs->set_current_page(-1);
 }
 
 	

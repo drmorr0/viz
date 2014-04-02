@@ -5,6 +5,17 @@
 #include "viz_canvas.h"
 
 /*
+ * Get the top-level window
+ */
+VizWindow* TheBuilder::getToplevel()
+{
+	Gtk::Widget* tl = get("viz_main_grid")->get_toplevel();
+	if (tl && tl->get_is_toplevel())
+		return (VizWindow*)tl;
+	else return nullptr;
+}
+
+/*
  * Returns the currently-selected tab of the interface.  TODO this will break if there are no tabs
  */
 VizCanvas* TheBuilder::getCurrentTab()

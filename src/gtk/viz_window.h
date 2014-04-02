@@ -12,6 +12,7 @@
 #include <graph.h>
 using graph::Graph;
 
+#include <string>
 #include <vector>
 #include <gtkmm.h>
 
@@ -20,7 +21,7 @@ class VizWindow : public Gtk::Window
 public:
 	VizWindow(Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
 	
-	void createTab(const char* tabName, const Graph& tabContents);
+	void createTab(const std::string& tabName, const Graph& tabContents);
 
 private:
 	

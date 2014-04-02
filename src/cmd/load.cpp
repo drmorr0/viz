@@ -4,7 +4,9 @@
 
 #include "load.h"
 #include "viz_canvas.h"
+#include "viz_window.h"
 #include "viz_prompt.h"
+#include "viz_io.h"
 #include "builder.h"
 
 #include <graph.h>
@@ -29,7 +31,10 @@ bool LoadCommand::operator()(tok_iter& token, const tok_iter& end)
 
 	if (subcommand == "graph")
 	{
-		return loadGraph("TODO");
+		if (token == end) 
+			{ VizPrompt::displayError("Too few arguments to load script."); return false; }
+		string filename = trim_copy(*token++);
+		return loadGraph(filename);
 	}
 	else if (subcommand == "script")
 	{
@@ -48,8 +53,13 @@ bool LoadCommand::operator()(tok_iter& token, const tok_iter& end)
 
 bool LoadCommand::loadGraph(const string& filename)
 {
-	VizPrompt::displayError("The load graph subcommand is currently not supported.");
+	Graph g;
+	try { g = readJsonTree(filename); }
+	catch (const Error& e) { VizPrompt::displayError(e.what()); return false; }
+
+	TheBuilder::getToplevel()->createTab(filename, g);
 	return true;
+	VizPrompt::displayError("The load graph subcommand is currently not supported.");
 }
 
 bool LoadCommand::loadScript(const string& filename)
@@ -77,6 +87,7 @@ bool LoadCommand::loadScript(const string& filename)
 
 	return true;
 }
+
 
 
 

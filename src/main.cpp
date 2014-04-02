@@ -4,6 +4,7 @@
 #include "main.h"
 #include "viz_io.h"
 #include "viz_window.h"
+#include "load.h"
 
 #include <graph.h>
 
@@ -24,12 +25,10 @@ int main(int argc, char* argv[])
 	opts options;
 	const char* filename = parseOpts(argc, argv, options);
 
-	vector<Graph> testGraph = { readJsonTree(filename), readJsonTree(filename) };
-
 	Gtk::Main kit(argc, argv);
 
 	VizWindow* mainWindow = new VizWindow();
-	mainWindow->createTab(filename, testGraph[0]);
+	LoadCommand().loadGraph(filename);
 
 	Gtk::Main::run(*mainWindow);
 
