@@ -5,6 +5,7 @@
  */
 
 #include "types.h"
+#include <graph_layout.h>
 
 #include <vector>
 #include <string>
@@ -13,7 +14,6 @@ namespace graph
 {
 	class Graph;
 
-	// Subgraph stuff
-	std::vector<int> getReachable(const Graph& g, const std::vector<int>& start);
 	std::vector<int> match(const Graph& g, const std::string& filterText, MatchOp op, double value);
+	GraphLayout improvedLayoutTreeLevel(const Graph&, int radius, int hSpace, int vSpace);
 };

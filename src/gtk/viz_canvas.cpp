@@ -7,6 +7,7 @@
 #include "more_graph_utils.h"
 #include "builder.h"
 
+#include <graph_utils.h>
 #include <graph_layout.h>
 
 #include <string>
@@ -31,7 +32,7 @@ VizCanvas::VizCanvas(Graph* graph) :
 			   Gdk::POINTER_MOTION_MASK);
 
 	// Compute an initial layout for the graph that we want to display
-	GraphLayout treeLayout = graph::layoutTreeLevel(*mGraph, 0, 0, 5, 50, 25);
+	GraphLayout treeLayout = graph::improvedLayoutTreeLevel(*mGraph, 15, 25, 50);
 
 	// First add all of the vertices to the scene
 	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)

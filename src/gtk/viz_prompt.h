@@ -10,10 +10,6 @@
 
 #include "util.h"
 
-// Sigh... boost...
-#include <boost/tokenizer.hpp>
-typedef boost::tokenizer<boost::escaped_list_separator<char>>::iterator tok_iter;
-
 #include <gtkmm.h>
 
 namespace VizPrompt

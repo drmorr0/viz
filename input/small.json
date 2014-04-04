@@ -1,0 +1,60 @@
+{"start_time": 50000, "clocks_per_sec": 1000000, "num_vars": 8905, "num_int_vars": 0, "num_bin_vars": 8904}
+{"node_id": 0, "explored_at": 0, "lower_bound": 55733.59, "upper_bound": 56153.00, "branching_var": "x329"}
+{"node_id": 0, "child": 2, "branch_dir": 1, "estimate": 56220.76, "contour": 1}
+{"node_id": 0, "child": 1, "branch_dir": -1, "estimate": 56220.76, "contour": 1}
+{"node_id": 2, "explored_at": 5740, "lower_bound": 56040.82, "upper_bound": 56153.00, "branching_var": "x34"}
+{"node_id": 2, "child": 4, "branch_dir": 1, "estimate": 56527.49, "contour": 2}
+{"node_id": 2, "child": 3, "branch_dir": -1, "estimate": 56527.49, "contour": 2}
+{"node_id": 4, "pruned_at": 5740, "lower_bound": 56040.82}
+{"node_id": 1, "explored_at": 6704, "lower_bound": 55788.07, "upper_bound": 56153.00, "branching_var": "x34"}
+{"node_id": 1, "child": 8, "branch_dir": 1, "estimate": 56306.67, "contour": 2}
+{"node_id": 1, "child": 7, "branch_dir": -1, "estimate": 56306.67, "contour": 2}
+{"node_id": 3, "pruned_at": 6704, "lower_bound": 56040.82}
+{"node_id": 7, "explored_at": 7129, "lower_bound": 55992.03, "upper_bound": 56153.00, "branching_var": "x5053"}
+{"node_id": 7, "child": 9, "branch_dir": -1, "estimate": 55983.69, "contour": 3}
+{"node_id": 7, "child": 10, "branch_dir": 1, "estimate": 55983.69, "contour": 3}
+{"node_id": 10, "pruned_at": 7129, "lower_bound": 55992.03}
+{"node_id": 9, "explored_at": 7422, "lower_bound": 55992.03, "upper_bound": 56153.00, "branching_var": "x617"}
+{"node_id": 9, "child": 11, "branch_dir": -1, "estimate": 56598.84, "contour": 4}
+{"node_id": 9, "child": 12, "branch_dir": 1, "estimate": 56598.84, "contour": 4}
+{"node_id": 11, "explored_at": 7422, "lower_bound": 55997.90, "upper_bound": 56153.00, "branching_var": "x7750"}
+{"node_id": 11, "child": 13, "branch_dir": -1, "estimate": 56579.86, "contour": 5}
+{"node_id": 11, "child": 14, "branch_dir": 1, "estimate": 56579.86, "contour": 5}
+{"node_id": 13, "explored_at": 7484, "lower_bound": 56011.84, "upper_bound": 56153.00, "branching_var": "x4094"}
+{"node_id": 13, "child": 15, "branch_dir": -1, "estimate": 56381.25, "contour": 6}
+{"node_id": 13, "child": 16, "branch_dir": 1, "estimate": 56381.25, "contour": 6}
+{"node_id": 15, "explored_at": 7647, "lower_bound": 56045.17, "upper_bound": 56153.00, "branching_var": "x2736"}
+{"node_id": 15, "child": 17, "branch_dir": -1, "estimate": 56044.98, "contour": 7}
+{"node_id": 15, "child": 18, "branch_dir": 1, "estimate": 56044.98, "contour": 7}
+{"node_id": 18, "pruned_at": 7647, "lower_bound": 56045.17}
+{"node_id": 17, "explored_at": 7891, "lower_bound": 56045.17, "upper_bound": 56153.00, "branching_var": "x7821"}
+{"node_id": 17, "child": 19, "branch_dir": -1, "estimate": 56369.34, "contour": 8}
+{"node_id": 17, "child": 20, "branch_dir": 1, "estimate": 56369.34, "contour": 8}
+{"node_id": 19, "explored_at": 7891, "lower_bound": 56063.57, "upper_bound": 56153.00, "branching_var": "x7911"}
+{"node_id": 19, "child": 22, "branch_dir": 1, "estimate": 56136.97, "contour": 9}
+{"node_id": 19, "child": 21, "branch_dir": -1, "estimate": 56136.97, "contour": 9}
+{"node_id": 22, "pruned_at": 7891, "lower_bound": 56063.57}
+{"node_id": 8, "explored_at": 8205, "lower_bound": 55805.36, "upper_bound": 56153.00, "branching_var": "x7911"}
+{"node_id": 8, "child": 23, "branch_dir": -1, "estimate": 56283.64, "contour": 3}
+{"node_id": 8, "child": 24, "branch_dir": 1, "estimate": 56283.64, "contour": 3}
+{"node_id": 23, "explored_at": 8344, "lower_bound": 55842.73, "upper_bound": 56153.00, "branching_var": "x4094"}
+{"node_id": 23, "child": 26, "branch_dir": 1, "estimate": 56329.63, "contour": 4}
+{"node_id": 23, "child": 25, "branch_dir": -1, "estimate": 56329.63, "contour": 4}
+{"node_id": 12, "is_terminal": true, "obj_value": 56137.00}
+{"node_id": 12, "pruned_at": 8550, "lower_bound": 55992.03}
+{"node_id": 14, "pruned_at": 8550, "lower_bound": 55997.90}
+{"node_id": 16, "pruned_at": 8550, "lower_bound": 56011.84}
+{"node_id": 20, "pruned_at": 8550, "lower_bound": 56045.17}
+{"node_id": 21, "pruned_at": 8550, "lower_bound": 56063.57}
+{"node_id": 24, "explored_at": 9000, "lower_bound": 55853.52, "upper_bound": 56137.00, "branching_var": "x4094"}
+{"node_id": 24, "child": 29, "branch_dir": -1, "estimate": 56384.25, "contour": 4}
+{"node_id": 24, "child": 30, "branch_dir": 1, "estimate": 56384.25, "contour": 4}
+{"node_id": 29, "explored_at": 9214, "lower_bound": 55912.08, "upper_bound": 56137.00, "branching_var": "x8636"}
+{"node_id": 29, "child": 32, "branch_dir": 1, "estimate": 56439.37, "contour": 5}
+{"node_id": 29, "child": 31, "branch_dir": -1, "estimate": 56439.37, "contour": 5}
+{"node_id": 32, "explored_at": 9495, "lower_bound": 55919.49, "upper_bound": 56137.00, "branching_var": "x5511"}
+{"node_id": 32, "child": 33, "branch_dir": -1, "estimate": 56391.62, "contour": 6}
+{"node_id": 32, "child": 34, "branch_dir": 1, "estimate": 56391.62, "contour": 6}
+{"node_id": 33, "explored_at": 9640, "lower_bound": 55920.98, "upper_bound": 56137.00, "branching_var": "x617"}
+{"node_id": 33, "child": 35, "branch_dir": -1, "estimate": 56368.14, "contour": 7}
+{"node_id": 33, "child": 36, "branch_dir": 1, "estimate": 56368.14, "contour": 7}
