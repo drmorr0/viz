@@ -9,6 +9,7 @@
 #include "help.h"
 #include "hide.h"
 #include "load.h"
+#include "save.h"
 #include "show.h"
 #include "quit.h"
 
@@ -58,6 +59,7 @@ void init()
 	CommandManager::registerCommand("help", HelpCommand());
 	CommandManager::registerCommand("hide", HideCommand());
 	CommandManager::registerCommand("load", LoadCommand());
+	CommandManager::registerCommand("save", SaveCommand());
 	CommandManager::registerCommand("show", ShowCommand());
 	CommandManager::registerCommand("quit", QuitCommand());
 }

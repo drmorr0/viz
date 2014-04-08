@@ -5,7 +5,7 @@
  *
  * This command loads a file; there are two types of files that can be loaded:
  *  1) a list of commands (called a script)
- *  2) a new graph (TODO)
+ *  2) a new graph 
  * The syntax for the load command is
  * 	load [graph|script] Filename
  * where Filename is the path from the current directory to the file to load.

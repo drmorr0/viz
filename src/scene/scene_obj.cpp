@@ -2,6 +2,8 @@
 // Implementation details for SceneObjects
 
 #include "scene_obj.h"
+#include "vector2d.h"
+#include "util.h"
 
 VertexSceneObject::VertexSceneObject(double x, double y, double radius, double thickness,
 		const Gdk::Color& color) :
@@ -21,12 +23,13 @@ VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius, doub
 	/* Do nothing */
 }
 
-bool VertexSceneObject::contains(const Vector2D& pt)
+bool VertexSceneObject::contains(const Vector2D& pt) const
 {
 	return length(mCenter - pt) < mRadius;
 }
 
-void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
+void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, 
+		double zoom) const
 {
 	// Translate from the position in graph-embedding space to canvas space
 	Vector2D canvPos = canvOffset + zoom * mCenter;
@@ -46,6 +49,13 @@ void VertexSceneObject::move(const Vector2D& delta)
 	mCenter += delta;
 }
 
+BoundingBox VertexSceneObject::bounds() const
+{ 
+	double absRadius = getAbsRadius();
+	return BoundingBox(mCenter - Vector2D(absRadius, absRadius), 
+					   mCenter + Vector2D(absRadius, absRadius));
+}
+
 EdgeSceneObject::EdgeSceneObject(int tailId, int headId) :
 	SceneObject(VISIBLE),
 	mTailId(tailId),
@@ -54,7 +64,7 @@ EdgeSceneObject::EdgeSceneObject(int tailId, int headId) :
 	/* Do nothing */
 }
 
-bool EdgeSceneObject::contains(const Vector2D& pt)
+bool EdgeSceneObject::contains(const Vector2D& pt) const
 {
 	return false; // TODO
 }
@@ -64,7 +74,7 @@ bool EdgeSceneObject::contains(const Vector2D& pt)
  * line from the center of one vertex to the center of the other, but we want to take into account
  * the radius of the vertex.  We need to do a bit of vector math here to make this work right
  */
-void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
+void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const
 {
 	// Get the Scene ids of the two endpoints
 	VertexSceneObject* headObj = (VertexSceneObject*)mParentScene->get(mHeadId);
@@ -107,5 +117,11 @@ void EdgeSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset
 	ctx->line_to(headCanvPos.x + edgeEnd.x, headCanvPos.y + edgeEnd.y);
 	ctx->stroke();
 	ctx->restore();
+}
+
+BoundingBox EdgeSceneObject::bounds() const
+{
+	// Every edge is attached to a vertex on both ends, so it will never be the top left point
+	return { 0, 0, 0, 0 };
 }
 

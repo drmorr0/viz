@@ -27,9 +27,10 @@ public:
 	int id() const { return mId; }
 	int& state() { return mState; }
 
-	virtual bool contains(const Vector2D& pt) = 0;
-	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) = 0;
+	virtual bool contains(const Vector2D& pt) const = 0;
+	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const= 0;
 	virtual void move(const Vector2D& delta) = 0;
+	virtual BoundingBox bounds() const = 0;
 
 protected:
 	friend class Scene;
@@ -49,6 +50,7 @@ public:
 	int addObject(SceneObject* obj); 
 	std::vector<SceneObject*> findObjects(const Vector2D& pt) const;
 	SceneObject* get(int id) const;
+	BoundingBox bounds() const;
 
 	void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
 	void showAll();

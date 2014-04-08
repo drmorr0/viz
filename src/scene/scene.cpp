@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include "scene_obj.h"
+#include "util.h"
 
 using namespace std;
 
@@ -40,6 +41,29 @@ SceneObject* Scene::get(int id) const
 {
 	if (mObjects.count(id) == 0) return nullptr;
 	else return mObjects.find(id)->second;
+}
+
+BoundingBox Scene::bounds() const
+{
+	// TODO there's probably a better way to do this
+	BoundingBox box(Infinity, Infinity, -Infinity, -Infinity);
+	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	{
+		if (i->second->state() & VISIBLE)
+		{
+			if (i->second->bounds().top < box.top)
+				box.top = i->second->bounds().top;
+			if (i->second->bounds().left < box.left)
+				box.left = i->second->bounds().left;
+			if (i->second->bounds().bottom > box.bottom)
+				box.bottom = i->second->bounds().bottom;
+			if (i->second->bounds().right > box.right)
+				box.right = i->second->bounds().right;
+
+		}
+	}
+
+	return box;
 }
 
 // Render all visible objects (TODO what about objects off-screen?)

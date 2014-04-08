@@ -80,6 +80,18 @@ void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color,
 	}
 	queue_draw();
 }
+
+void VizCanvas::renderToContext(const CairoContext& ctx, double scale)
+{
+	// Need to negate the top-left corner to provide the canvas offset amount
+	mScene->render(ctx, scale * Vector2D(-bounds().left, -bounds().top), scale);
+}
+
+BoundingBox VizCanvas::bounds() const
+{
+	return mScene->bounds();
+}
+
 /**** EVENT HANDLERS *****/
 
 /*

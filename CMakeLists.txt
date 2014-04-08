@@ -29,6 +29,7 @@ add_executable(viz
 	"${VIZ_CODE_DIR}/cmd/hide.cpp"
 	"${VIZ_CODE_DIR}/cmd/help.cpp"
 	"${VIZ_CODE_DIR}/cmd/load.cpp"
+	"${VIZ_CODE_DIR}/cmd/save.cpp"
 	"${VIZ_CODE_DIR}/cmd/show.cpp"
 	"${VIZ_CODE_DIR}/cmd/quit.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_canvas.cpp"

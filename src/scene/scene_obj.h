@@ -19,17 +19,19 @@ public:
 	VertexSceneObject(const Vector2D& center, double radius = 10, double thickness = 2, 
 			const Gdk::Color& = Gdk::Color("#000000"));
 
-	virtual bool contains(const Vector2D& pt);
-	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
+	virtual bool contains(const Vector2D& pt) const;
+	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const;
 	virtual void move(const Vector2D& delta);
+	virtual BoundingBox bounds() const;
 
 	Vector2D getPos() const { return mCenter; }
 	void setColor(const Gdk::Color& c) { mColor = c; }
-	Gdk::Color getColor() { return mColor; }
+	Gdk::Color getColor() const { return mColor; }
 	void setRadius(double r) { mRadius = r; }
 	double getRadius() const { return mRadius; }
 	void setThickness(double t) { mThickness = t; }
 	double getThickness() const { return mThickness; }
+	double getAbsRadius() const { return mRadius + mThickness; }
 
 private:
 	Vector2D mCenter;
@@ -44,9 +46,10 @@ class EdgeSceneObject : public SceneObject
 public:
 	EdgeSceneObject(int tailId, int headId);
 
-	virtual bool contains(const Vector2D& pt);
-	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom);
+	virtual bool contains(const Vector2D& pt) const;
+	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const;
 	virtual void move(const Vector2D& delta) { return; }
+	virtual BoundingBox bounds() const;
 
 private:
 	int mTailId, mHeadId;
