@@ -32,13 +32,14 @@ VizCanvas::VizCanvas(Graph* graph) :
 			   Gdk::POINTER_MOTION_MASK);
 
 	// Compute an initial layout for the graph that we want to display
-	GraphLayout treeLayout = graph::improvedLayoutTreeLevel(*mGraph, 15, 25, 50);
+	int nodeRadius = 10;
+	GraphLayout treeLayout = graph::improvedLayoutTreeLevel(*mGraph, nodeRadius, 30, 75);
 
 	// First add all of the vertices to the scene
 	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)
 	{
 		int sceneId = mScene->addObject(
-				new VertexSceneObject(node->second.first, node->second.second, 5));
+				new VertexSceneObject(node->second.first, node->second.second, nodeRadius));
 		graph2scene[node->first] = sceneId;
 		scene2graph[sceneId] = node->first;
 	}
@@ -69,12 +70,13 @@ void VizCanvas::hide(const vector<int>& toHide)
 }
 
 void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color, 
-		double radius, double thickness)
+		const Gdk::Color& fill, double radius, double thickness)
 {
 	for (int i = 0; i < toFormat.size(); ++i)
 	{
 		VertexSceneObject* vertex = (VertexSceneObject*)mScene->get(toSceneID(toFormat[i]));
 		vertex->setColor(color);
+		if (fill != Gdk::Color("#deaded")) vertex->setFill(fill); // TODO Stupid hack
 		if (radius >= 0) vertex->setRadius(radius);
 		if (thickness >= 0) vertex->setThickness(thickness);
 	}
@@ -160,7 +162,7 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 		if (selected.size() > 0)
 		{
 			int gid = toGraphID(selected[0]->id());
-			string info = "Subproblem ID: " + to_string(gid) + "\n";
+			string info = "";
 			graph::VertexData* data = mGraph->vertexData(gid);
 			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 				info += prop->first + ": " + prop->second + "\n";

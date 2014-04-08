@@ -17,7 +17,7 @@ using namespace std;
 using namespace boost;
 
 FormatCommand::FormatCommand() :
-	Command("format PropertyName Operator Value Color [Radius] [Thickness]")
+	Command("format PropertyName Operator Value Color [Fill] [Radius] [Thickness]")
 {
 	/* Do nothing */
 }
@@ -58,6 +58,15 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 	// Make sure the color string is valid TODO
 	Gdk::Color color(colorStr);
 
+	// TOKEN: fill color
+	Gdk::Color fill("#deaded");
+    if (token != end) 
+	{ 
+		string fillStr = trim_copy(*token++);
+		// Make sure the color string is valid TODO
+		fill = Gdk::Color(fillStr);
+	}
+
 	// TOKEN: radius (optional)
 	string radStr; if (token != end) radStr = trim_copy(*token++);
 
@@ -93,17 +102,17 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
             *token + "...", VizPrompt::Warning);
 	}
 
-    return (*this)(filterBy, oper, value, color, radius, thickness);
+    return (*this)(filterBy, oper, value, color, fill, radius, thickness);
 }
 
 bool FormatCommand::operator()(const string& filterBy, MatchOp oper, double value, 
-		const Gdk::Color color, double radius, double thickness)
+		const Gdk::Color& color, const Gdk::Color& fill, double radius, double thickness)
 {
 	VizCanvas* canvas = TheBuilder::getCurrentTab();
 
     vector<int> matched = graph::match(*canvas->graph(), filterBy, oper, value);
     if (matched.empty()) VizPrompt::displayMessage("No matches found.", VizPrompt::Info);
-    else canvas->format(matched, color, radius, thickness);
+    else canvas->format(matched, color, fill, radius, thickness);
 
 	return true;
 }

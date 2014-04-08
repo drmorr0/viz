@@ -31,7 +31,7 @@ public:
 	void showAll();
 	void hide(const std::vector<int>& toHide);
 	void format(const std::vector<int>& toFormat, const Gdk::Color& color, 
-			double radius, double thickness);
+			const Gdk::Color& fill, double radius, double thickness);
 	void renderToContext(const CairoContext& ctx, double scale);
 	BoundingBox bounds() const;
 	const Graph* graph() const { return mGraph; }

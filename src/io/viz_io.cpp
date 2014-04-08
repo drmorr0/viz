@@ -38,6 +38,7 @@ Graph readJsonTree(const string& filename)
 		int branchDir = 0;
 		double estimate = -1;
 		int contour = MaxInt;
+		bool feasible = false;
 
 		for (int i = 0; i < obj.size(); ++i)
 		{
@@ -46,12 +47,14 @@ Graph readJsonTree(const string& filename)
 			else if (obj[i].name_ == "pruned_at")     prunedAt = obj[i].value_.get_int();
 			else if (obj[i].name_ == "generated_at")  generatedAt = obj[i].value_.get_int();
 			else if (obj[i].name_ == "lower_bound")   lowerBound = obj[i].value_.get_real();
-			else if (obj[i].name_ == "upper_bound")   upperBound = obj[i].value_.get_real();
+			else if (obj[i].name_ == "upper_bound" ||
+					 obj[i].name_ == "obj_value")     upperBound = obj[i].value_.get_real();
 			else if (obj[i].name_ == "branching_var") branchingVar = obj[i].value_.get_str();
 			else if (obj[i].name_ == "child")         child = obj[i].value_.get_int();
 			else if (obj[i].name_ == "branch_dir")    branchDir = obj[i].value_.get_int();
 			else if (obj[i].name_ == "estimate")      estimate = obj[i].value_.get_real();
 			else if (obj[i].name_ == "contour")       contour = obj[i].value_.get_int();
+			else if (obj[i].name_ == "is_int_feas")   feasible = true;
 		}
 
 		if (nodeId == -1) continue; // Every JSON line MUST specify a node_id to be parsed
@@ -73,6 +76,9 @@ Graph readJsonTree(const string& filename)
 		}
 
 		// Fill in the current node vertex data
+		nodeData->properties["Node ID"] = to_string(nodeId);
+		if (childData)
+			childData->properties["Node ID"] = to_string(child);
 		if (exploredAt != -1)        
 			nodeData->properties["Explored"] = to_string(exploredAt);
 		if (prunedAt != -1)          
@@ -81,10 +87,12 @@ Graph readJsonTree(const string& filename)
 			nodeData->properties["Generated"] = to_string(generatedAt);
 		if (lowerBound != -Infinity) 
 			nodeData->properties["Lower bound"] = to_string(lowerBound);
-		if (upperBound != Infinity)  
+		if (upperBound != Infinity && nodeData->properties.count("Feasible solution") == 0)  
 			nodeData->properties["Upper bound"] = to_string(upperBound);
 		if (branchingVar != "")	  
 			nodeData->properties["Branching variable"] = branchingVar;
+		if (feasible)
+			nodeData->properties["Feasible solution"] = "1";
 		if (branchDir != 0)          
 		{
 			if (branchDir == -1)
