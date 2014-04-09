@@ -12,6 +12,9 @@
 #define BREAK "x"
 #define SEP "h"
 
+#define VIZ_VERSION_MAJOR @VIZ_VERSION_MAJOR@
+#define VIZ_VERSION_MINOR @VIZ_VERSION_MINOR@
+
 struct opts
 {
 	bool opt1;

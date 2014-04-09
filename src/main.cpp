@@ -96,6 +96,8 @@ const char* parseOpts(int argc, char* argv[], opts& options)
 void usage(const char* name)
 {
 	int len = sizeof(optStrings)/(3 * sizeof(char*));
+	printf("Viz! (the visualization software) version %d.%d\n\n", 
+			VIZ_VERSION_MAJOR, VIZ_VERSION_MINOR);
 	printf("%s <options> [filename]\n", name);
 	for (int i = 0; i < len; ++i)
 	{

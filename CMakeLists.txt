@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(VIZ)
+set(VIZ_VERSION_MAJOR 0)
+set(VIZ_VERSION_MINOR 1)
 
 # Output in the root directory -- need to adjust location of layout files in src/util/builder.h
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${VIZ_SOURCE_DIR})
@@ -10,6 +12,7 @@ set(CMAKE_CXX_FLAGS "-Wempty-body -Wall -Wno-sign-compare -std=c++0x ${CMAKE_CXX
 
 # The root location for the source code
 set(VIZ_CODE_DIR "${VIZ_SOURCE_DIR}/src")
+configure_file("${VIZ_CODE_DIR}/main.h.in" "${VIZ_CODE_DIR}/main.h")
 
 # Custom include directories
 include_directories(
