@@ -21,6 +21,7 @@ public:
 
 	// Subcommands
 	bool saveGraph(const std::string& filename, const std::string& format, double width);
+
 private:
 	bool isSupportedFormat(std::string& format);
 };

@@ -34,18 +34,18 @@ public:
 			const Gdk::Color& fill, double radius, double thickness);
 	void renderToContext(const CairoContext& ctx, double scale);
 	BoundingBox bounds() const;
-	const Graph* graph() const { return mGraph; }
+	const Graph* graph() const { return fpGraph; }
 
 private:
-	unique_ptr<Scene> mScene;
-	Graph* mGraph;
+	unique_ptr<Scene> pScene;
+	Graph* fpGraph;
 
 	// Canvas position information
 	Vector2D mCanvOffset;
 	double mZoom;
 
 	Vector2D mDragPos;
-	std::vector<SceneObject*> mDragItems;
+	std::vector<SceneObject*> mfpDragItems;
 	bool mDragged;
 
 	// Signal handlers

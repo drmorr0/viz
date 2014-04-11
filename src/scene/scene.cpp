@@ -10,16 +10,16 @@ using namespace std;
 // Delete everything in the scene graph
 Scene::~Scene()
 {
-	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
 		delete (i->second);
 }
 
 // Add an object to the scene graph and return its id
 int Scene::addObject(SceneObject* obj)
 {
-	obj->mParentScene = this;
+	obj->mfpParentScene = this;
 	obj->mId = mObjNextId++;
-	mObjects[obj->mId] = obj;
+	mpObjects[obj->mId] = obj;
 	return obj->mId;
 }
 
@@ -27,7 +27,7 @@ int Scene::addObject(SceneObject* obj)
 vector<SceneObject*> Scene::findObjects(const Vector2D& pt) const
 {
 	vector<SceneObject*> objs;
-	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
 	{
 		if (i->second->contains(pt))
 			objs.push_back(i->second);
@@ -39,15 +39,15 @@ vector<SceneObject*> Scene::findObjects(const Vector2D& pt) const
 // Get an object by its ID
 SceneObject* Scene::get(int id) const
 {
-	if (mObjects.count(id) == 0) return nullptr;
-	else return mObjects.find(id)->second;
+	if (mpObjects.count(id) == 0) return nullptr;
+	else return mpObjects.find(id)->second;
 }
 
 BoundingBox Scene::bounds() const
 {
 	// TODO there's probably a better way to do this
 	BoundingBox box(Infinity, Infinity, -Infinity, -Infinity);
-	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
 	{
 		if (i->second->state() & VISIBLE)
 		{
@@ -69,7 +69,7 @@ BoundingBox Scene::bounds() const
 // Render all visible objects (TODO what about objects off-screen?)
 void Scene::render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom)
 {
-	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
 	{
 		if (i->second->state() & VISIBLE)
 			i->second->render(ctx, canvOffset, zoom);
@@ -79,7 +79,7 @@ void Scene::render(const CairoContext& ctx, const Vector2D& canvOffset, double z
 // Show all objects in the scene graph
 void Scene::showAll()
 {
-	for (auto i = mObjects.begin(); i != mObjects.end(); ++i)
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
 		i->second->state() |= VISIBLE;
 }
 

@@ -3,7 +3,8 @@
 
 #include "viz_canvas.h"
 #include "scene.h"
-#include "scene_obj.h"
+#include "vertex_obj.h"
+#include "edge_obj.h"
 #include "more_graph_utils.h"
 #include "builder.h"
 
@@ -21,8 +22,8 @@ using namespace std;
  *  2) Initialize the scene graph
  */
 VizCanvas::VizCanvas(Graph* graph) :
-	mScene(new Scene),
-	mGraph(graph),
+	pScene(new Scene),
+	fpGraph(graph),
 	mCanvOffset(400, 50),
 	mZoom(1.0)
 {
@@ -33,21 +34,21 @@ VizCanvas::VizCanvas(Graph* graph) :
 
 	// Compute an initial layout for the graph that we want to display
 	int nodeRadius = 10;
-	GraphLayout treeLayout = graph::improvedLayoutTreeLevel(*mGraph, nodeRadius, 30, 75);
+	GraphLayout treeLayout = graph::improvedLayoutTreeLevel(*fpGraph, nodeRadius, 30, 75);
 
 	// First add all of the vertices to the scene
 	for (auto node = treeLayout.begin(); node != treeLayout.end(); ++node)
 	{
-		int sceneId = mScene->addObject(
+		int sceneId = pScene->addObject(
 				new VertexSceneObject(node->second.first, node->second.second, nodeRadius));
 		graph2scene[node->first] = sceneId;
 		scene2graph[sceneId] = node->first;
 	}
 
 	// Next add the edges to the scene
-	for (auto tail = mGraph->begin(); tail != mGraph->end(); ++tail)
+	for (auto tail = fpGraph->begin(); tail != fpGraph->end(); ++tail)
 		for (auto head = tail->second.begin(); head != tail->second.end(); ++head)
-			mScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
+			pScene->addObject(new EdgeSceneObject(toSceneID(tail->first), toSceneID(*head)));
 }
 
 /* 
@@ -55,7 +56,7 @@ VizCanvas::VizCanvas(Graph* graph) :
  */
 void VizCanvas::showAll()
 {
-	mScene->showAll();
+	pScene->showAll();
 	queue_draw();
 }
 
@@ -65,7 +66,7 @@ void VizCanvas::showAll()
 void VizCanvas::hide(const vector<int>& toHide)
 {
 	for (int i = 0; i < toHide.size(); ++i)
-		mScene->get(toSceneID(toHide[i]))->state() &= ~VISIBLE;
+		pScene->get(toSceneID(toHide[i]))->state() &= ~VISIBLE;
 	queue_draw();
 }
 
@@ -74,7 +75,7 @@ void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color,
 {
 	for (int i = 0; i < toFormat.size(); ++i)
 	{
-		VertexSceneObject* vertex = (VertexSceneObject*)mScene->get(toSceneID(toFormat[i]));
+		VertexSceneObject* vertex = (VertexSceneObject*)pScene->get(toSceneID(toFormat[i]));
 		vertex->setColor(color);
 		if (fill != Gdk::Color("#deaded")) vertex->setFill(fill); // TODO Stupid hack
 		if (radius >= 0) vertex->setRadius(radius);
@@ -86,12 +87,12 @@ void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color,
 void VizCanvas::renderToContext(const CairoContext& ctx, double scale)
 {
 	// Need to negate the top-left corner to provide the canvas offset amount
-	mScene->render(ctx, scale * Vector2D(-bounds().left, -bounds().top), scale);
+	pScene->render(ctx, scale * Vector2D(-bounds().left, -bounds().top), scale);
 }
 
 BoundingBox VizCanvas::bounds() const
 {
-	return mScene->bounds();
+	return pScene->bounds();
 }
 
 /**** EVENT HANDLERS *****/
@@ -102,7 +103,7 @@ BoundingBox VizCanvas::bounds() const
  */
 bool VizCanvas::on_draw(const CairoContext& ctx)
 {
-	mScene->render(ctx, mCanvOffset, mZoom);
+	pScene->render(ctx, mCanvOffset, mZoom);
 	return true;
 }
 
@@ -114,10 +115,10 @@ bool VizCanvas::on_draw(const CairoContext& ctx)
 bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 {
 	mDragPos = Vector2D(evt->x, evt->y);
-	vector<SceneObject*> selected = mScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
+	vector<SceneObject*> selected = pScene->findObjects(1 / mZoom * (mDragPos - mCanvOffset));
 	
 	// If the user clicked on an object, start dragging it
-	mDragItems.clear(); mDragged = false;
+	mfpDragItems.clear(); mDragged = false;
 	for (int i = 0; i < selected.size(); ++i)
 	{
 		// Right now, we just drag the first object in the list that is marked as
@@ -130,14 +131,14 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 			// clicked on
 			if (evt->state & GDK_SHIFT_MASK)
 			{
-				vector<int> subtree = graph::getReachable(*mGraph, {toGraphID(selected[i]->id())});
+				vector<int> subtree = graph::getReachable(*fpGraph, {toGraphID(selected[i]->id())});
 				for (int j = 0; j < subtree.size(); ++j)
-					mDragItems.push_back(mScene->get(toSceneID(subtree[j])));
+					mfpDragItems.push_back(pScene->get(toSceneID(subtree[j])));
 				break;
 			}
 			else
 			{
-				mDragItems.push_back(selected[i]);
+				mfpDragItems.push_back(selected[i]);
 				break;
 			}
 		}
@@ -157,13 +158,13 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 	if (!mDragged)
 	{
 		Vector2D clickPos(evt->x, evt->y);
-		vector<SceneObject*> selected = mScene->findObjects(1 / mZoom * (clickPos - mCanvOffset));
+		vector<SceneObject*> selected = pScene->findObjects(1 / mZoom * (clickPos - mCanvOffset));
 
 		if (selected.size() > 0)
 		{
 			int gid = toGraphID(selected[0]->id());
 			string info = "";
-			graph::VertexData* data = mGraph->vertexData(gid);
+			graph::VertexData* data = fpGraph->vertexData(gid);
 			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 				info += prop->first + ": " + prop->second + "\n";
 			
@@ -207,9 +208,9 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 		mDragged = true;
 		Vector2D newDragPos(evt->x, evt->y);
 		Vector2D delta = newDragPos - mDragPos;
-		if (mDragItems.size() == 0) mCanvOffset += delta;
-		else for (int i = 0; i < mDragItems.size(); ++i)
-			mDragItems[i]->move(1 / mZoom * delta);
+		if (mfpDragItems.size() == 0) mCanvOffset += delta;
+		else for (int i = 0; i < mfpDragItems.size(); ++i)
+			mfpDragItems[i]->move(1 / mZoom * delta);
 		mDragPos = newDragPos;
 		queue_draw();  // TODO only redraw visible part of scene graph
 	}
