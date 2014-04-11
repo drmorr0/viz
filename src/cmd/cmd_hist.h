@@ -19,7 +19,7 @@ public:
 	CommandHistory();
 	~CommandHistory();
 
-	void push(const Command* const cmd);
+	void push(const Command& cmd);
 	Command* get() const; 
 	void step(int stepSize); 
 

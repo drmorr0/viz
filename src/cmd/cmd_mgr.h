@@ -28,7 +28,7 @@ public:
 	std::string getRegisteredNames();
 
 private:
-	std::map<std::string, Command*> mRegisteredCommands;
+	std::map<std::string, Command*> mpRegisteredCommands;
 
 	CommandManager(CommandManager&) = delete;
 	CommandManager& operator=(CommandManager&) = delete;

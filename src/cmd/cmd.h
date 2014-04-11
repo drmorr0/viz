@@ -28,8 +28,8 @@ public:
 	virtual ~Command() { }
 	virtual Command* clone() const = 0;
 
-	void setInputStr(const std::string& str) { inputStr = str; }
-	std::string getInputStr() { return inputStr; }
+	void setInputStr(const std::string& str) { mInputStr = str; }
+	std::string getInputStr() { return mInputStr; }
 	void setOutput(Outputter* output) { fpOutput = output; }
 	std::string help() const { return mHelpString; }
 
@@ -39,7 +39,7 @@ protected:
 	Command(const std::string& help) : mHelpString(help) { }
 
 	const std::string mHelpString;
-	std::string inputStr;
+	std::string mInputStr;
 	Outputter* fpOutput;
 };
 

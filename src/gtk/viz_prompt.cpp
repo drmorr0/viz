@@ -6,6 +6,7 @@
 
 #include "cmd_mgr.h"
 #include "cmd_hist.h"
+#include "bad.h"
 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -65,12 +66,15 @@ void VizPrompt::read()
 
 	bool status = false;
 	Command* cmd = fpCmdMgr->get(cmdStr);
+	// If the command was valid, execute it and store it in the command history
 	if (cmd) 
 	{
 		cmd->setInputStr(str);
-		pCmdHist->push(cmd);
+		pCmdHist->push(*cmd);
 		status = (*cmd)(token, tok.end());
 	}
+	// Otherwise, store a "dummy" command in the command history
+	else pCmdHist->push(BadCommand(str));
 
 	// If the command could not be parsed, display an error message
 	if (!status) writeError("---Invalid command---");
@@ -94,17 +98,22 @@ void VizPrompt::write(const string& text, OutputStyle status)
 	else 						buffer->insert(ins, "\n" + text);
 }
 
+// Use the up/down arrows to navigate through the history of commands entered
 bool VizPrompt::navigate(GdkEventKey* key)
 {
+	// Handle up/down keypresses, ignore all others
 	if (key->keyval == GDK_KEY_Up)
 		pCmdHist->step(-1);
 	else if (key->keyval == GDK_KEY_Down)
 		pCmdHist->step(1);
 	else return false;
 
+	// Get the command, set the text of the input bar to the command's text, and place the
+	// input bar's cursor at the end of the (newly-added) text
 	Command* cmd = pCmdHist->get();
 	if (cmd) fpInput->set_text(pCmdHist->get()->getInputStr());
 	else fpInput->set_text("");
+	fpInput->set_position(-1);
 	return true;
 }
 
