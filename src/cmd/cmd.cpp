@@ -11,11 +11,17 @@ using namespace std;
 
 Command::~Command() { }
 
-map<string, Command*> CommandManager::mRegisteredCommands;
-
-void CommandManager::registerCommand(const string& name, const Command& cmd)
+CommandManager::~CommandManager()
 {
-	mRegisteredCommands[name] = cmd.clone();
+	for (auto i = mRegisteredCommands.begin(); i != mRegisteredCommands.end(); ++i)
+		delete i->second;
+}
+
+void CommandManager::registerCommand(const string& name, const Command& cmd, Outputter* output)
+{
+	Command* copy = cmd.clone();
+	copy->setOutput(output);
+	mRegisteredCommands[name] = copy;
 }
 
 void CommandManager::unregisterCommand(const string& name)

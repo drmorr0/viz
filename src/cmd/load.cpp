@@ -26,26 +26,26 @@ LoadCommand::LoadCommand() :
 
 bool LoadCommand::operator()(tok_iter& token, const tok_iter& end)
 {
-    if (token == end) { VizPrompt::displayError("Too few arguments to load."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to load."); return false; }
     string subcommand = trim_copy(*token++);
 
 	if (subcommand == "graph")
 	{
 		if (token == end) 
-			{ VizPrompt::displayError("Too few arguments to load script."); return false; }
+			{ fpOutput->writeError("Too few arguments to load script."); return false; }
 		string filename = trim_copy(*token++);
 		return loadGraph(filename);
 	}
 	else if (subcommand == "script")
 	{
 		if (token == end) 
-			{ VizPrompt::displayError("Too few arguments to load script."); return false; }
+			{ fpOutput->writeError("Too few arguments to load script."); return false; }
 		string filename = trim_copy(*token++);
 		return loadScript(filename);
 	}
 	else 
 	{
-		VizPrompt::displayError(string("Unrecognized subcommand to load: ") + subcommand);
+		fpOutput->writeError(string("Unrecognized subcommand to load: ") + subcommand);
 		return false;
 	}
     return true;
@@ -55,11 +55,10 @@ bool LoadCommand::loadGraph(const string& filename)
 {
 	Graph g;
 	try { g = readJsonTree(filename); }
-	catch (const Error& e) { VizPrompt::displayError(e.what()); return false; }
+	catch (const Error& e) { fpOutput->writeError(e.what()); return false; }
 
 	TheBuilder::getToplevel()->createTab(filename, g);
 	return true;
-	VizPrompt::displayError("The load graph subcommand is currently not supported.");
 }
 
 bool LoadCommand::loadScript(const string& filename)
@@ -67,7 +66,7 @@ bool LoadCommand::loadScript(const string& filename)
 	ifstream scriptFile(filename);
 	if (!scriptFile)
 	{
-		VizPrompt::displayError(string("Could not open '") + filename + "' for input");
+		fpOutput->writeError(string("Could not open '") + filename + "' for input");
 		return false;
 	}
 

@@ -20,8 +20,8 @@ ShowCommand::ShowCommand() :
 
 bool ShowCommand::operator()(tok_iter& token, const tok_iter& end)
 {
-    if (token != end) VizPrompt::displayMessage(string("Ignoring extra arguments to show: ") + 
-            *token + "...", VizPrompt::Warning);
+    if (token != end) 
+		fpOutput->writeWarning(string("Ignoring extra arguments to show: ") + *token + "...");
     TheBuilder::getCurrentTab()->showAll();
     return true;
 }

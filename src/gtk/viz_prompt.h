@@ -8,18 +8,41 @@
  *
  */
 
+#include "outputter.h"
 #include "util.h"
 
+#include <memory>
+#include <string>
 #include <gtkmm.h>
 
-namespace VizPrompt
-{
-	enum DisplayStatus { Normal, Info, Warning, Error };
-	void init();
+class Command;
+class CommandManager;
 
-	void parseCommand();
-	void displayError(const string& text); 
-	void displayMessage(const string& text, DisplayStatus = Normal);
+class VizPrompt : public Outputter
+{
+public:
+	VizPrompt(const char* inputName, const char* outputName, const char* scrollName, 
+			CommandManager* cmdMgr);
+
+	void read();
+
+	void writeInfo(const string& text); 
+	void writeWarning(const string& text); 
+	void writeError(const string& text); 
+	void write(const string& text, OutputStyle = Normal);
+	
+private:
+	Gtk::Entry* fpInput;
+	Gtk::TextView* fpOutput;
+	Gtk::ScrolledWindow* fpScrollPane;
+
+	CommandManager* fpCmdMgr;
+//	CommandHistory mCmdHistory;
+
+	void refreshOutput(Gtk::Allocation& a);
+
+	VizPrompt(const VizPrompt&) = delete;
+	VizPrompt& operator=(const VizPrompt&) = delete;
 };
 
 #endif // VIZ_PROMPT_H

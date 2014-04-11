@@ -7,16 +7,41 @@
 #include "scene_obj.h"
 #include "builder.h"
 
+#include "cmd.h"
+#include "format.h"
+#include "help.h"
+#include "hide.h"
+#include "load.h"
+#include "save.h"
+#include "show.h"
+#include "quit.h"
+
 #include <graph.h>
 
 using namespace std;
 
 VizWindow::VizWindow(Gtk::WindowType wt) :
-	Gtk::Window(wt)
+	Gtk::Window(wt),
+	pCmdMgr(new CommandManager()),
+	pCmdPrompt(new VizPrompt("viz_cmd_prompt", "viz_cmd_output", "viz_cmd_scroll", pCmdMgr.get()))
 {
-	VizPrompt::init();
 	maximize();
 	add(*TheBuilder::get("viz_main_grid"));
+
+	// Register the commands that are accepted by the main command prompt
+	pCmdMgr->registerCommand("exit", QuitCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("format", FormatCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("help", HelpCommand(pCmdMgr.get()), pCmdPrompt.get());
+	pCmdMgr->registerCommand("hide", HideCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("load", LoadCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("save", SaveCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("show", ShowCommand(), pCmdPrompt.get());
+	pCmdMgr->registerCommand("quit", QuitCommand(), pCmdPrompt.get());
+}
+
+void VizWindow::load(const string& filename)
+{
+	((LoadCommand*)pCmdMgr->get("load"))->loadGraph(filename);
 }
 
 /*

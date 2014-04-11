@@ -25,11 +25,11 @@ HideCommand::HideCommand() :
 bool HideCommand::operator()(tok_iter& token, const tok_iter& end)
 {
 	// TOKEN: filter string
-    if (token == end) { VizPrompt::displayError("Too few arguments to filter."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to filter."); return false; }
     string filterBy = trim_copy(*token++);
 
 	// TOKEN: match operator
-    if (token == end) { VizPrompt::displayError("Too few arguments to filter."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to filter."); return false; }
     string matchStr = trim_copy(*token++);
     MatchOp oper;
     if      (matchStr == "<")  oper = Less;
@@ -38,26 +38,23 @@ bool HideCommand::operator()(tok_iter& token, const tok_iter& end)
     else if (matchStr == "!=") oper = NotEq;
     else if (matchStr == ">=") oper = GreaterEq;
     else if (matchStr == ">")  oper = Greater;
-    else { VizPrompt::displayError(string("Invalid operator ") + matchStr); return false; }
+    else { fpOutput->writeError(string("Invalid operator ") + matchStr); return false; }
 
 	// TOKEN: value
-    if (token == end) { VizPrompt::displayError("Too few arguments to filter."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to filter."); return false; }
     string valStr = trim_copy(*token++);
 
     double value;
     try { value = stod(valStr); }
     catch (invalid_argument& e)
     {
-		VizPrompt::displayError(string("Invalid numeric value: ") + valStr);
+		fpOutput->writeError(string("Invalid numeric value: ") + valStr);
         return false;
     }
 
 	// Extra tokens are ignored
     if (token != end) 
-	{
-		VizPrompt::displayMessage(string("Ignoring extra arguments to filter: ") +
-            *token + "...", VizPrompt::Warning);
-	}
+		fpOutput->writeWarning(string("Ignoring extra arguments to filter: ") + *token + "...");
 
 	// Do the filter
 	return (*this)(filterBy, oper, value);
@@ -70,7 +67,7 @@ bool HideCommand::operator()(const string& filterBy, MatchOp oper, double value)
 
     // Find the vertices that match and hide them
     vector<int> matched = graph::match(*canvas->graph(), filterBy, oper, value);
-    if (matched.empty()) VizPrompt::displayMessage("No matches found.", VizPrompt::Info);
+    if (matched.empty()) fpOutput->writeInfo("No matches found.");
     else canvas->hide(matched);
     return true;
 }

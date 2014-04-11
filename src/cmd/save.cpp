@@ -33,7 +33,7 @@ SaveCommand::SaveCommand() :
 bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 {
 	// TOKEN: filename
-    if (token == end) { VizPrompt::displayError("Too few arguments to save."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to save."); return false; }
     string filename = trim_copy(*token++);
 
 	// TOKEN: format or width
@@ -52,7 +52,7 @@ bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 			format = str; algorithm::to_lower(format);
 			if (!isSupportedFormat(format)) 
 			{
-				VizPrompt::displayError(string("Unsupported image format: ") + format);
+				fpOutput->writeError(string("Unsupported image format: ") + format);
 				return false;
 			}
 		}
@@ -67,8 +67,7 @@ bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 		{
 			string test = filename.substr(pos + 1);
 			if (!isSupportedFormat(test))
-				VizPrompt::displayMessage("Could not identify image format: default to PostScript",
-						VizPrompt::Warning);
+				fpOutput->writeWarning("Could not identify image format: default to PostScript");
 			else format = test;
 				
 		}
@@ -79,15 +78,12 @@ bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 		string wStr = trim_copy(*token++);
 		try { width = stoi(wStr); if (width < 0) throw invalid_argument("width"); }
 		catch (invalid_argument& e)
-			{ VizPrompt::displayError(string("Invalid numeric value: ") + wStr); return false; }
+			{ fpOutput->writeError(string("Invalid numeric value: ") + wStr); return false; }
 	}
 
 	// Extra tokens are ignored
     if (token != end) 
-	{
-		VizPrompt::displayMessage(string("Ignoring extra arguments to save: ") +
-            *token + "...", VizPrompt::Warning);
-	}
+		fpOutput->writeWarning(string("Ignoring extra arguments to save: ") + *token + "...");
 
 	return saveGraph(filename, format, width);
 }

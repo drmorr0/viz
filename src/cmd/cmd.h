@@ -17,10 +17,13 @@
  *
  */
 
+#include "outputter.h"
 #include "types.h"
 
 #include <string>
 #include <map>
+
+class VizPrompt;
 
 class Command
 {
@@ -29,25 +32,30 @@ public:
 	virtual Command* clone() const = 0;
 	
 	std::string help() const { return mHelpString; }
+	void setOutput(Outputter* output) { fpOutput = output; }
 	virtual bool operator()(tok_iter& token, const tok_iter& end) = 0;
 
 protected:
-	Command(const std::string& help) : mHelpString(help) { } ;
+	Command(const std::string& help) : mHelpString(help) { }
+
 	const std::string mHelpString;
+	Outputter* fpOutput;
 };
 
 class CommandManager
 {
 public:
-	static void registerCommand(const std::string& cmdname, const Command& cmd);
-	static void unregisterCommand(const std::string& name);
-	static Command* get(const std::string& name);
-	static std::string getRegisteredNames();
+	CommandManager() { }
+	~CommandManager();
+
+	void registerCommand(const std::string& cmdname, const Command& cmd, Outputter* output);
+	void unregisterCommand(const std::string& name);
+	Command* get(const std::string& name);
+	std::string getRegisteredNames();
 
 private:
-	static std::map<std::string, Command*> mRegisteredCommands;
+	std::map<std::string, Command*> mRegisteredCommands;
 
-	CommandManager() = delete;
 	CommandManager(CommandManager&) = delete;
 	CommandManager& operator=(CommandManager&) = delete;
 };

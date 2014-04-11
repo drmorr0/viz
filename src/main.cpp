@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	Gtk::Main kit(argc, argv);
 
 	VizWindow* mainWindow = new VizWindow();
-	LoadCommand().loadGraph(filename);
+	mainWindow->load(filename);
 
 	Gtk::Main::run(*mainWindow);
 

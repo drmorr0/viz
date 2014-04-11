@@ -25,11 +25,11 @@ FormatCommand::FormatCommand() :
 bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 {
 	// TOKEN: filter string
-    if (token == end) { VizPrompt::displayError("Too few arguments to format."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to format."); return false; }
     string filterBy = trim_copy(*token++);
 
 	// TOKEN: match operator
-    if (token == end) { VizPrompt::displayError("Too few arguments to format."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to format."); return false; }
     string matchStr = trim_copy(*token++);
     MatchOp oper;
     if      (matchStr == "<")  oper = Less;
@@ -38,22 +38,22 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
     else if (matchStr == "!=") oper = NotEq;
     else if (matchStr == ">=") oper = GreaterEq;
     else if (matchStr == ">")  oper = Greater;
-    else { VizPrompt::displayError(string("Invalid operator ") + matchStr); return false; }
+    else { fpOutput->writeError(string("Invalid operator ") + matchStr); return false; }
 
 	// TOKEN: value
-    if (token == end) { VizPrompt::displayError("Too few arguments to format."); return false;}
+    if (token == end) { fpOutput->writeError("Too few arguments to format."); return false;}
     string valStr = trim_copy(*token++);
 
 	double value;
     try { value = stod(valStr); }
     catch (invalid_argument& e)
     {
-		VizPrompt::displayError(string("Invalid numeric value: ") + valStr);
+		fpOutput->writeError(string("Invalid numeric value: ") + valStr);
         return false;
     }
 
 	// TOKEN: color
-    if (token == end) { VizPrompt::displayError("Too few arguments to format."); return false; }
+    if (token == end) { fpOutput->writeError("Too few arguments to format."); return false; }
 	string colorStr = trim_copy(*token++);
 	// Make sure the color string is valid TODO
 	Gdk::Color color(colorStr);
@@ -76,7 +76,7 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 		try { radius = stod(radStr); if (radius < 0) throw invalid_argument("negative"); }
 		catch (invalid_argument& e)
 		{
-			VizPrompt::displayError(string("Invalid numeric radius: ") + radStr);
+			fpOutput->writeError(string("Invalid numeric radius: ") + radStr);
 			return false;
 		}
 	}
@@ -90,17 +90,14 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 		try { thickness = stod(thickStr); if (thickness < 0) throw invalid_argument("negative"); }
 		catch (invalid_argument& e)
 		{
-			VizPrompt::displayError(string("Invalid numeric thickness: ") + thickStr);
+			fpOutput->writeError(string("Invalid numeric thickness: ") + thickStr);
 			return false;
 		}
 	}
 
 	// Ignore additional arguments to format
     if (token != end) 
-	{
-		VizPrompt::displayMessage(string("Ignoring extra arguments to format: ") +
-            *token + "...", VizPrompt::Warning);
-	}
+		fpOutput->writeWarning(string("Ignoring extra arguments to format: ") + *token + "...");
 
     return (*this)(filterBy, oper, value, color, fill, radius, thickness);
 }
@@ -111,7 +108,7 @@ bool FormatCommand::operator()(const string& filterBy, MatchOp oper, double valu
 	VizCanvas* canvas = TheBuilder::getCurrentTab();
 
     vector<int> matched = graph::match(*canvas->graph(), filterBy, oper, value);
-    if (matched.empty()) VizPrompt::displayMessage("No matches found.", VizPrompt::Info);
+    if (matched.empty()) fpOutput->writeInfo("No matches found.");
     else canvas->format(matched, color, fill, radius, thickness);
 
 	return true;

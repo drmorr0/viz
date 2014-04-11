@@ -10,7 +10,7 @@
 using namespace std;
 using namespace boost;
 
-HelpCommand::HelpCommand() :
+HelpCommand::HelpCommand(CommandManager* cmdMgr) :
 	Command("Display help mesage")
 {
 	/* Do nothing */
@@ -18,20 +18,19 @@ HelpCommand::HelpCommand() :
 
 bool HelpCommand::operator()(tok_iter& token, const tok_iter& end)
 {
-	// If we didn't request help on a specific command, display a generic help message
-	if (token == end)
+	if (token == end) 
 	{
-		VizPrompt::displayMessage(string("The following commands are recognized by Viz") +
-					   string(" (type help command for more info):"), VizPrompt::Info);
-		VizPrompt::displayMessage(string("    ") + CommandManager::getRegisteredNames());
+		fpOutput->writeInfo("The following commands are recognized by Viz"  
+				" (type help <command> for more info):");
+		fpOutput->write(string("    ") + fpCmdMgr->getRegisteredNames());
 	}
-	else
+
+	else 
 	{
-		// Find the command that we requested help for
-		string cmdStr = trim_copy(*token++);
-		auto cmd = CommandManager::get(cmdStr);
-		if (cmd) VizPrompt::displayMessage(cmd->help(), VizPrompt::Info);
-		else VizPrompt::displayError(string("Unknown command: ") + cmdStr);
+		string cmdName = trim_copy(*token++);
+		auto cmd = fpCmdMgr->get(cmdName);
+		if (cmd) fpOutput->writeInfo(cmd->help());
+		else fpOutput->writeError(string("Unknown command: ") + cmdName);
 	}
 
 	return true;
