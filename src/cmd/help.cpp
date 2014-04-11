@@ -3,7 +3,7 @@
  */
 
 #include "help.h"
-#include "viz_prompt.h"
+#include "cmd_mgr.h"
 
 #include <boost/algorithm/string/trim.hpp>
 

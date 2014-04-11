@@ -9,6 +9,7 @@
  */
 
 #include "outputter.h"
+#include "cmd_hist.h"
 #include "util.h"
 
 #include <memory>
@@ -37,8 +38,9 @@ private:
 	Gtk::ScrolledWindow* fpScrollPane;
 
 	CommandManager* fpCmdMgr;
-//	CommandHistory mCmdHistory;
+	std::unique_ptr<CommandHistory> pCmdHist;
 
+	bool navigate(GdkEventKey* key);
 	void refreshOutput(Gtk::Allocation& a);
 
 	VizPrompt(const VizPrompt&) = delete;

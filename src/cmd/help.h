@@ -8,6 +8,8 @@
 
 #include "cmd.h"
 
+class CommandManager;
+
 class HelpCommand : public Command
 {
 public:

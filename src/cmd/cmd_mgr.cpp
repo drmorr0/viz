@@ -5,11 +5,9 @@
  * the function that should be called when the command is entered
  */
 
-#include "cmd.h"
+#include "cmd_mgr.h"
 
 using namespace std;
-
-Command::~Command() { }
 
 CommandManager::~CommandManager()
 {

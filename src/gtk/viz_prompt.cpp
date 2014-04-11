@@ -4,7 +4,8 @@
 #include "viz_prompt.h"
 #include "builder.h"
 
-#include "cmd.h"
+#include "cmd_mgr.h"
+#include "cmd_hist.h"
 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -16,10 +17,12 @@ VizPrompt::VizPrompt(const char* inputName, const char* outputName, const char* 
 	fpInput(TheBuilder::get<Gtk::Entry>(inputName)),
 	fpOutput(TheBuilder::get<Gtk::TextView>(outputName)),
 	fpScrollPane(TheBuilder::get<Gtk::ScrolledWindow>(scrollName)),
-	fpCmdMgr(cmdMgr)
+	fpCmdMgr(cmdMgr),
+	pCmdHist(new CommandHistory)
 {
 	// Set up an event handler when the command prompt has focus and the user presses enter
 	fpInput->signal_activate().connect(sigc::mem_fun(*this, &VizPrompt::read));
+	fpInput->signal_key_press_event().connect(sigc::mem_fun(*this, &VizPrompt::navigate));
 
 	// Create some formatting styles -- we may want to create these elsewhere if 
 	// we plan to use them for multiple buffers (TODO)
@@ -62,7 +65,12 @@ void VizPrompt::read()
 
 	bool status = false;
 	Command* cmd = fpCmdMgr->get(cmdStr);
-	if (cmd) status = (*cmd)(token, tok.end());
+	if (cmd) 
+	{
+		cmd->setInputStr(str);
+		pCmdHist->push(cmd);
+		status = (*cmd)(token, tok.end());
+	}
 
 	// If the command could not be parsed, display an error message
 	if (!status) writeError("---Invalid command---");
@@ -84,6 +92,20 @@ void VizPrompt::write(const string& text, OutputStyle status)
 	else if (status == Warning) buffer->insert_with_tag(ins, "\n" + text, "style_warning");
 	else if (status == Error)   buffer->insert_with_tag(ins, "\n" + text, "style_error");
 	else 						buffer->insert(ins, "\n" + text);
+}
+
+bool VizPrompt::navigate(GdkEventKey* key)
+{
+	if (key->keyval == GDK_KEY_Up)
+		pCmdHist->step(-1);
+	else if (key->keyval == GDK_KEY_Down)
+		pCmdHist->step(1);
+	else return false;
+
+	Command* cmd = pCmdHist->get();
+	if (cmd) fpInput->set_text(pCmdHist->get()->getInputStr());
+	else fpInput->set_text("");
+	return true;
 }
 
 // Scroll to the bottom of the output panel

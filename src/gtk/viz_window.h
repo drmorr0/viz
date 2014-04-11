@@ -8,6 +8,7 @@
  */
 
 #include "viz_prompt.h"
+#include "cmd_mgr.h"
 #include "types.h"
 
 #include <graph.h>
@@ -18,8 +19,6 @@ using graph::Graph;
 #include <memory>
 
 #include <gtkmm.h>
-
-class CommandManager;
 
 class VizWindow : public Gtk::Window
 {
