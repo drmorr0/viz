@@ -25,7 +25,9 @@ VizCanvas::VizCanvas(Graph* graph) :
 	pScene(new Scene),
 	fpGraph(graph),
 	mCanvOffset(400, 50),
-	mZoom(1.0)
+	mZoomStep(1.1),
+	mZoom(1.0),
+	mZoomFinal(-1)
 {
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
 	// handlers, nor does it seem to work with the Gdk::ALL_EVENTS_MASK (TODO)
@@ -168,7 +170,7 @@ bool VizCanvas::on_button_release_event(GdkEventButton* evt)
 			for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
 				info += prop->first + ": " + prop->second + "\n";
 			
-			Gtk::TextView* infoBox = TheBuilder::get<Gtk::TextView>("viz_info_box");
+			Gtk::TextView* infoBox = TheBuilder::get<Gtk::TextView>("viz_sel_info_box");
 			infoBox->get_buffer()->set_text(info);
 		}
 	}
@@ -186,8 +188,8 @@ bool VizCanvas::on_scroll_event(GdkEventScroll* evt)
 	Vector2D nodePos = 1 / mZoom * (Vector2D(evt->x, evt->y) - mCanvOffset);
 	double oldZoom = mZoom;
 
-	if (evt->direction == GDK_SCROLL_UP) mZoom *= 2;
-	else if (evt->direction == GDK_SCROLL_DOWN) mZoom /= 2;
+	if (evt->direction == GDK_SCROLL_UP) mZoom *= mZoomStep;
+	else if (evt->direction == GDK_SCROLL_DOWN) mZoom /= mZoomStep;
 
 	mCanvOffset += nodePos * (oldZoom - mZoom);
 	queue_draw();  // TODO only redraw visible part of scene graph

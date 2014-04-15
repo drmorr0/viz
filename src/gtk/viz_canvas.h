@@ -42,7 +42,8 @@ private:
 
 	// Canvas position information
 	Vector2D mCanvOffset;
-	double mZoom;
+	const double mZoomStep;
+	double mZoom, mZoomFinal;
 
 	Vector2D mDragPos;
 	std::vector<SceneObject*> mfpDragItems;
