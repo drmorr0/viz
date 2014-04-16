@@ -130,7 +130,7 @@ bool SaveCommand::saveGraph(const string& filename, const string& format, double
 	}
 	
 	// Draw the image to the surface
-	TheBuilder::getCurrentTab()->renderToContext(destContext, scale);
+	TheBuilder::getCurrentTab()->render(destContext, scale);
 
 	// If we aren't using Cairo to render, create a Gdk::Pixbuf and save to the specified file
 	if (format != "ps" && format != "pdf" && format != "eps" && format != "svg")
