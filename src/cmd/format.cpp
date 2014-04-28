@@ -3,6 +3,7 @@
  */
 
 #include "format.h"
+#include "viz_tab.h"
 #include "viz_canvas.h"
 #include "viz_prompt.h"
 #include "more_graph_utils.h"
@@ -105,11 +106,11 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 bool FormatCommand::operator()(const string& filterBy, MatchOp oper, double value, 
 		const Gdk::Color& color, const Gdk::Color& fill, double radius, double thickness)
 {
-	VizCanvas* canvas = TheBuilder::getCurrentTab();
+	VizTab* tab = TheBuilder::getCurrentTab();
 
-    vector<int> matched = graph::match(*canvas->graph(), filterBy, oper, value);
+    vector<int> matched = graph::match(*tab->graph(), filterBy, oper, value);
     if (matched.empty()) fpOutput->writeInfo("No matches found.");
-    else canvas->format(matched, color, fill, radius, thickness);
+    else tab->canvas()->format(matched, color, fill, radius, thickness);
 
 	return true;
 }

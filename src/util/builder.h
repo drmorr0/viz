@@ -10,7 +10,7 @@
 #include <gtkmm.h>
 
 class VizWindow;
-class VizCanvas;
+class VizTab;
 
 /*** Gtk Builder Class ***/
 class TheBuilder
@@ -19,7 +19,7 @@ public:
 	template<typename T = Gtk::Widget>
 	static T* get(const char* name);
 	static VizWindow* getToplevel();
-	static VizCanvas* getCurrentTab();
+	static VizTab* getCurrentTab();
 
 private:
 	TheBuilder();

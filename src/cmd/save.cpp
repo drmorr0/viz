@@ -3,6 +3,7 @@
  */
 
 #include "save.h"
+#include "viz_tab.h"
 #include "viz_canvas.h"
 #include "viz_window.h"
 #include "viz_prompt.h"
@@ -90,9 +91,8 @@ bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 
 bool SaveCommand::saveGraph(const string& filename, const string& format, double width)
 {
-	VizCanvas* canvas = TheBuilder::getCurrentTab();
-	auto gdkwin = canvas->get_window();
-	BoundingBox canvBnd = canvas->bounds();
+	VizTab* tab = TheBuilder::getCurrentTab();
+	BoundingBox canvBnd = tab->canvas()->bounds();
 	double scale = width == -1 ? 1 :  width / canvBnd.width();
 	double outputW = scale * canvBnd.width();
 	double outputH = scale * canvBnd.height();
@@ -130,7 +130,7 @@ bool SaveCommand::saveGraph(const string& filename, const string& format, double
 	}
 	
 	// Draw the image to the surface
-	TheBuilder::getCurrentTab()->render(destContext, scale);
+	tab->canvas()->render(destContext, scale);
 
 	// If we aren't using Cairo to render, create a Gdk::Pixbuf and save to the specified file
 	if (format != "ps" && format != "pdf" && format != "eps" && format != "svg")

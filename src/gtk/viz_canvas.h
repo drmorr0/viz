@@ -26,7 +26,7 @@ class VizTab;
 class VizCanvas : public Gtk::DrawingArea
 {
 public:
-	VizCanvas(Graph* graph);
+	VizCanvas(Graph* graph, VizTab* parent);
 
 	void showAll();
 	void hide(const std::vector<int>& toHide);
@@ -36,9 +36,10 @@ public:
 	void render(const CairoContext& ctx, double scale, const Vector2D& offset, 
 			bool renderSelected = false);
 	BoundingBox bounds() const;
-	const Graph* graph() const { return fpGraph; }
+	VizTab* getTab() const { return fpParent; }
 
 private:
+	VizTab* fpParent;
 	unique_ptr<Scene> pScene;
 	Graph* fpGraph;
 
@@ -47,13 +48,13 @@ private:
 	const double mZoomStep;
 	double mZoom;
 
-	bool mInCurrSel;
-	Vector2D mDragPos;
-	std::vector<SceneObject*> mfpSelectedItems;
+	bool mInCurrSel, mDragSelection;
+	Vector2D mClickPos, mDragPos;
 
 	// Signal handlers
 	virtual bool on_draw(const CairoContext& ctx);
 	virtual bool on_button_press_event(GdkEventButton* evt);
+	virtual bool on_button_release_event(GdkEventButton* evt);
 	virtual bool on_scroll_event(GdkEventScroll* evt);
 	virtual bool on_motion_notify_event(GdkEventMotion* evt);
 
@@ -64,8 +65,10 @@ private:
 	std::map<int, int> scene2graph;
 
 	// Convert to and from screen coordinates to scene coordinates
-	Vector2D toScenePos(const Vector2D& screenPos);
-	Vector2D toScreenPos(const Vector2D& scenePos);
+	Vector2D toScenePos(const Vector2D& screenPos) const;
+	double toSceneX(double screenX) const;
+	double toSceneY(double screenY) const;
+	Vector2D toScreenPos(const Vector2D& scenePos) const;
 };
 
 #endif // VIZ_CANVAS_H

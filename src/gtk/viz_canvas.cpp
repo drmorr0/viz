@@ -2,6 +2,7 @@
 // Implementation details for the VizCanvas class
 
 #include "viz_canvas.h"
+#include "viz_tab.h"
 #include "scene.h"
 #include "vertex_obj.h"
 #include "edge_obj.h"
@@ -22,17 +23,20 @@ using namespace std;
  *  1) Set up the events that the canvas will accept
  *  2) Initialize the scene graph
  */
-VizCanvas::VizCanvas(Graph* graph) :
+VizCanvas::VizCanvas(Graph* graph, VizTab* parent) :
+	fpParent(parent), 
 	pScene(new Scene),
 	fpGraph(graph),
 	mCanvOffset(400, 50),
 	mZoomStep(1.1),
 	mZoom(1.0),
-	mInCurrSel(false)
+	mInCurrSel(false),
+	mDragSelection(false)
 {
 	// I don't understand exactly how this works -- I can't get GTK to recognize custom event
 	// handlers, nor does it seem to work with the Gdk::ALL_EVENTS_MASK (TODO)
-	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK);
+	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | 
+			Gdk::POINTER_MOTION_MASK);
 
 	// Compute an initial layout for the graph that we want to display
 	int nodeRadius = 10;
@@ -96,19 +100,35 @@ void VizCanvas::render(const CairoContext& ctx, double scale, const Vector2D& of
 {
 	pScene->render(ctx, offset, scale);
 
-	// Draw dashed lines around each selected object
+	// Handle selections
 	if (renderSelected)
 	{
 		ctx->save();
 		ctx->set_dash( vector<double>{ 1, 2 }, 0);
 		ctx->set_line_width(1);
-		for (int i = 0; i < mfpSelectedItems.size(); ++i)
+
+		vector<int> currSelection = fpParent->getSelection();
+
+		// Draw dashed lines around each selected object
+		for (int i = 0; i < currSelection.size(); ++i)
 		{
-			BoundingBox box = mfpSelectedItems[i]->bounds();
+			BoundingBox box = pScene->get(toSceneID(currSelection[i]))->bounds();
 			ctx->rectangle(mCanvOffset.x + mZoom * box.left, mCanvOffset.y + mZoom * box.top, 
 					mZoom * box.width(), mZoom * box.height());
 			ctx->stroke();
 		}
+
+		// Draw a selection box
+		if (mDragSelection)
+		{
+			double left = mClickPos.x < mDragPos.x ? mClickPos.x : mDragPos.x;
+			double top = mClickPos.y < mDragPos.y ? mClickPos.y : mDragPos.y;
+			double width = fabs(mClickPos.x - mDragPos.x);
+			double height = fabs(mClickPos.y - mDragPos.y);
+			ctx->rectangle(left, top, width, height);
+			ctx->stroke();
+		}
+
 		ctx->restore();
 	}
 }
@@ -137,26 +157,28 @@ bool VizCanvas::on_draw(const CairoContext& ctx)
  */
 bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 {
-	mDragPos = Vector2D(evt->x, evt->y);
-	vector<SceneObject*> objs = pScene->findObjects(toScenePos(mDragPos));
+	mClickPos = Vector2D(evt->x, evt->y);
+	vector<SceneObject*> objs = pScene->findObjects(toScenePos(mClickPos));
 
 	mInCurrSel = false;
 	if (objs.size() > 0)
 	{
 		// Check to see if we clicked on anything in our current selection list
-		for (int i = 0; i < mfpSelectedItems.size(); ++i)
-			if (mfpSelectedItems[i]->contains(toScenePos(mDragPos)))
+		vector<int> currSelection = fpParent->getSelection();
+		for (int i = 0; i < currSelection.size(); ++i)
+		{
+			int sId = toSceneID(currSelection[i]);
+			if (pScene->get(sId)->contains(toScenePos(mClickPos)))
 				{ mInCurrSel = true; break; }
+		}
 
 		// If we didn't, then either add to the selection (if shift is held) or change 
 		// the selection (if shift isn't held).
 		if (!mInCurrSel)
 		{
-			if ((evt->state & GDK_SHIFT_MASK) != GDK_SHIFT_MASK)
-				mfpSelectedItems.clear();
-
-			// Only use the first item in objs (TODO - some sort of z-index?)
-			mfpSelectedItems.push_back(objs[0]);
+			if (!(evt->state & GDK_SHIFT_MASK))
+				fpParent->setSelection( { toGraphID(objs[0]->id()) } );
+			else fpParent->addToSelection( { toGraphID(objs[0]->id()) } );
 
 			// Only need to redraw if the selection actually changed...
 			queue_draw();
@@ -165,20 +187,26 @@ bool VizCanvas::on_button_press_event(GdkEventButton* evt)
 		// Regardless, we are now inside the current selection, so set mInCurrSel = true
 		mInCurrSel = true;
 	}
-
-	if (mfpSelectedItems.size() > 0)
-	{
-		int gid = toGraphID(mfpSelectedItems.back()->id());
-		string info = "";
-		graph::VertexData* data = fpGraph->vertexData(gid);
-		for (auto prop = data->properties.begin(); prop != data->properties.end(); ++prop)
-			info += prop->first + ": " + prop->second + "\n";
-		
-		Gtk::TextView* infoBox = TheBuilder::get<Gtk::TextView>("viz_sel_info_box");
-		infoBox->get_buffer()->set_text(info);
-	}
-
 	
+	return true;
+}
+
+bool VizCanvas::on_button_release_event(GdkEventButton* evt)
+{
+	if (mDragSelection && evt->state & GDK_SHIFT_MASK)
+	{
+		mDragSelection = false;
+		double left = mClickPos.x < mDragPos.x ? toSceneX(mClickPos.x) : toSceneX(mDragPos.x);
+		double top = mClickPos.y < mDragPos.y ? toSceneY(mClickPos.y) : toSceneY(mDragPos.y);
+		double right = mClickPos.x > mDragPos.x ? toSceneX(mClickPos.x) : toSceneX(mDragPos.x);
+		double bottom = mClickPos.y > mDragPos.y ? toSceneY(mClickPos.y) : toSceneY(mDragPos.y);
+		vector<SceneObject*> objs = pScene->findObjects(BoundingBox(top, left, bottom, right));
+		vector<int> ids;
+		for (int i = 0; i < objs.size(); ++i)
+			ids.push_back(toGraphID(objs[i]->id()));
+		fpParent->addToSelection(ids);
+		queue_draw();
+	}
 	return true;
 }
 
@@ -211,12 +239,21 @@ bool VizCanvas::on_motion_notify_event(GdkEventMotion* evt)
 	else if (evt->is_hint) return true;
 	else 
 	{
-		Vector2D newDragPos(evt->x, evt->y);
-		Vector2D delta = newDragPos - mDragPos;
-		if (!mInCurrSel) mCanvOffset += delta;
-		else for (int i = 0; i < mfpSelectedItems.size(); ++i)
-			mfpSelectedItems[i]->move(1 / mZoom * delta);
-		mDragPos = newDragPos;
+		mDragPos = Vector2D(evt->x, evt->y);
+		if (evt->state & GDK_SHIFT_MASK) mDragSelection = true;
+		else
+		{
+			Vector2D delta = mDragPos - mClickPos;
+			if (!mInCurrSel) mCanvOffset += delta;
+			else 
+			{
+				vector<int> currSelection = fpParent->getSelection();
+				for (int i = 0; i < currSelection.size(); ++i)
+					pScene->get(toSceneID(currSelection[i]))->move(1 / mZoom * delta);
+			}
+			mClickPos = mDragPos;
+		}
+
 		queue_draw();  // TODO only redraw visible part of scene graph
 	}
 	
@@ -245,12 +282,22 @@ int VizCanvas::toSceneID(int graphID) const
 	else return -1;
 }
 
-Vector2D VizCanvas::toScenePos(const Vector2D& screenPos)
+Vector2D VizCanvas::toScenePos(const Vector2D& screenPos) const
 {
 	return 1 / mZoom * (screenPos - mCanvOffset);
 }
 
-Vector2D VizCanvas::toScreenPos(const Vector2D& scenePos)
+double VizCanvas::toSceneX(double screenX) const
+{
+	return 1 / mZoom * (screenX - mCanvOffset.x);
+}
+
+double VizCanvas::toSceneY(double screenY) const
+{
+	return 1 / mZoom * (screenY - mCanvOffset.y);
+}
+
+Vector2D VizCanvas::toScreenPos(const Vector2D& scenePos) const
 {
 	return mCanvOffset + mZoom * scenePos;
 }

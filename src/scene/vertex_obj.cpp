@@ -31,6 +31,14 @@ bool VertexSceneObject::contains(const Vector2D& pt) const
 	return length(mCenter - pt) < mRadius;
 }
 
+bool VertexSceneObject::inside(const BoundingBox& area) const
+{
+	return (mCenter.x > area.left &&
+			mCenter.x < area.right &&
+			mCenter.y > area.top &&
+			mCenter.y < area.bottom);
+}
+
 void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffset, 
 		double zoom) const
 {

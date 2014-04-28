@@ -38,6 +38,7 @@ add_executable(viz
 	"${VIZ_CODE_DIR}/cmd/quit.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_canvas.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_prompt.cpp"
+	"${VIZ_CODE_DIR}/gtk/viz_tab.cpp"
 	"${VIZ_CODE_DIR}/gtk/viz_window.cpp"
 	"${VIZ_CODE_DIR}/io/viz_io.cpp"
 	"${VIZ_CODE_DIR}/scene/scene.cpp"

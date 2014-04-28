@@ -22,6 +22,11 @@ bool EdgeSceneObject::contains(const Vector2D& pt) const
 	return false; // TODO
 }
 
+bool EdgeSceneObject::inside(const BoundingBox& area) const
+{
+	return false; // TODO
+}
+
 /* 
  * Render an edge of the graph; edges are always attached to two vertices, and we want to draw a
  * line from the center of one vertex to the center of the other, but we want to take into account

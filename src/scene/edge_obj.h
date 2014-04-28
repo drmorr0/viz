@@ -16,6 +16,7 @@ public:
 	EdgeSceneObject(int tailId, int headId);
 
 	virtual bool contains(const Vector2D& pt) const;
+	virtual bool inside(const BoundingBox& area) const;
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const;
 	virtual void move(const Vector2D& delta) { return; }
 	virtual BoundingBox bounds() const;

@@ -36,6 +36,19 @@ vector<SceneObject*> Scene::findObjects(const Vector2D& pt) const
 	return objs;
 }
 
+// Find all objects that are contained within a bounding box
+vector<SceneObject*> Scene::findObjects(const BoundingBox& area) const
+{
+	vector<SceneObject*> objs;
+	for (auto i = mpObjects.begin(); i != mpObjects.end(); ++i)
+	{
+		if (i->second->inside(area))
+			objs.push_back(i->second);
+	}
+
+	return objs;
+}
+
 // Get an object by its ID
 SceneObject* Scene::get(int id) const
 {

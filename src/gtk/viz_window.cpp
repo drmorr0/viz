@@ -2,8 +2,8 @@
 // Implementation details for the VizWindow class
 
 #include "viz_window.h"
-#include "viz_canvas.h"
 #include "viz_prompt.h"
+#include "viz_tab.h"
 #include "scene_obj.h"
 #include "builder.h"
 
@@ -39,27 +39,22 @@ VizWindow::VizWindow(Gtk::WindowType wt) :
 	pCmdMgr->registerCommand("quit", QuitCommand(), pCmdPrompt.get());
 }
 
+VizWindow::~VizWindow()
+{
+	for (int i = 0; i < mpTabs.size(); ++i)
+		delete mpTabs[i];
+}
+
 void VizWindow::load(const string& filename)
 {
 	((LoadCommand*)pCmdMgr->get("load"))->loadGraph(filename);
 }
 
-/*
- * Create a new tab and add it to the notebook.
- */
-void VizWindow::createTab(const string& tabName, const Graph& tabContents)
+void VizWindow::createTab(const string& name, const Graph& g)
 {
-	Gtk::Notebook* vizTabs = TheBuilder::get<Gtk::Notebook>("viz_tabs");
-
-	Gtk::Frame* newTab = Gtk::manage(new Gtk::Frame);
-	VizCanvas* tabCanvas = Gtk::manage(new VizCanvas(new Graph(tabContents)));
-	vizTabs->append_page(*newTab, tabName);
-	newTab->add(*tabCanvas);
-	newTab->show_all();
-
-	// Negative numbers set to the last page
-	vizTabs->set_current_page(-1);
+	mpTabs.push_back(new VizTab(g, name));
 }
+
 
 	
 

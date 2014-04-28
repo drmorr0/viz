@@ -26,6 +26,7 @@ public:
 
 	int addObject(SceneObject* obj); 
 	std::vector<SceneObject*> findObjects(const Vector2D& pt) const;
+	std::vector<SceneObject*> findObjects(const BoundingBox& area) const;
 	SceneObject* get(int id) const;
 	BoundingBox bounds() const;
 

@@ -20,10 +20,13 @@ using graph::Graph;
 
 #include <gtkmm.h>
 
+class VizTab;
+
 class VizWindow : public Gtk::Window
 {
 public:
 	VizWindow(Gtk::WindowType wt = Gtk::WINDOW_TOPLEVEL);
+	~VizWindow();
 	
 	void load(const std::string& filename);
 	void createTab(const std::string& tabName, const Graph& tabContents);
@@ -31,6 +34,7 @@ public:
 private:
 	std::unique_ptr<CommandManager> pCmdMgr;
 	std::unique_ptr<VizPrompt> pCmdPrompt;
+	std::vector<VizTab*> mpTabs;
 	
 public:
 	// Disable copy/assignment for now

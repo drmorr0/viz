@@ -3,6 +3,7 @@
  */
 
 #include "show.h"
+#include "viz_tab.h"
 #include "viz_canvas.h"
 #include "viz_prompt.h"
 #include "builder.h"
@@ -22,7 +23,7 @@ bool ShowCommand::operator()(tok_iter& token, const tok_iter& end)
 {
     if (token != end) 
 		fpOutput->writeWarning(string("Ignoring extra arguments to show: ") + *token + "...");
-    TheBuilder::getCurrentTab()->showAll();
+    TheBuilder::getCurrentTab()->canvas()->showAll();
     return true;
 }
 

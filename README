@@ -34,7 +34,7 @@ not work.
 To compile this source code on Linux:
 
 0) Edit the CMakeLists.txt file in the root directory:
-	- Change the location of the GRAPHLIB_DIR variable on line 56
+	- Change the location of the GRAPHLIB_DIR variable on line 57
 	  to match the location in which you have installed it (if you
 	  are running the debug version of this code, you will need to
 	  install the debug version of graphlib as well).

@@ -25,6 +25,7 @@ public:
 	int& state() { return mState; }
 
 	virtual bool contains(const Vector2D& pt) const = 0;
+	virtual bool inside(const BoundingBox& area) const = 0;
 	virtual void render(const CairoContext& ctx, const Vector2D& canvOffset, double zoom) const= 0;
 	virtual void move(const Vector2D& delta) = 0;
 	virtual BoundingBox bounds() const = 0;

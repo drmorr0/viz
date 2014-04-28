@@ -3,6 +3,7 @@
  */
 
 #include "load.h"
+#include "viz_tab.h"
 #include "viz_canvas.h"
 #include "viz_window.h"
 #include "viz_prompt.h"
