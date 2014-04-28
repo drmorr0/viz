@@ -11,7 +11,8 @@ using namespace std;
 using namespace boost;
 
 HelpCommand::HelpCommand(CommandManager* cmdMgr) :
-	Command("Display help mesage")
+	Command("Display help mesage"),
+	fpCmdMgr(cmdMgr)
 {
 	/* Do nothing */
 }
