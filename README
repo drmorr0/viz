@@ -1,7 +1,10 @@
-Welcome to Viz! The visualization software.  By David R. Morrison.
+Welcome to Viz! The visualization software.  Written by David R. Morrison.
 
 Copyright (c) 2014 University of Illinois Board of Trustees 
 See the accompanying LICENSE file for details.
+
+This program funded in part by the National Science Foundation Graduate
+Research Fellowship Program under Grant Number DGE-1144245
 
 This software is under active development.  Expecting backwards 
 compatibility, or relying on any specific feature that may or may not
@@ -17,9 +20,9 @@ Requirements
  * gtkmm-3.0 (and all dev files)
  * cairomm-3.0 (and all dev files)
  * JSON spirit (available at
-		http://www.codeproject.com/Articles/20027/JSON-Spirit-A-C-JSON-Parser-Generator-Implemented)
+        http://www.codeproject.com/Articles/20027/JSON-Spirit-A-C-JSON-Parser-Generator-Implemented)
  * The most recent version of graph-lib (available at 
-		https://github.com/drmorr0/graph-lib)
+        https://github.com/drmorr0/graph-lib)
  * pkg-config
 
 Compilation Instructions
@@ -34,15 +37,15 @@ not work.
 To compile this source code on Linux:
 
 0) Edit the CMakeLists.txt file in the root directory:
-	- Change the location of the GRAPHLIB_DIR variable on line 57
-	  to match the location in which you have installed it (if you
-	  are running the debug version of this code, you will need to
-	  install the debug version of graphlib as well).
+    - Change the location of the GRAPHLIB_DIR variable on line 57
+      to match the location in which you have installed it (if you
+      are running the debug version of this code, you will need to
+      install the debug version of graphlib as well).
 1) Enter the build directory
 2) Type 'cmake ..', and then type 'make'
 
-	If you want to build a debug version of this code, you will need 
-	to run cmake with the following option: -DCMAKE_BUILD_TYPE=debug
+    If you want to build a debug version of this code, you will need 
+    to run cmake with the following option: -DCMAKE_BUILD_TYPE=debug
 
 To compile this source code under Windows:
 
@@ -54,7 +57,7 @@ Running Instructions
 --------------------
 There are sample input files contained in the 'inputs' subdirectory.  
 For example, try running
-	viz input/test.json
+    viz input/test.json
 
 Viz has two different modes of input, mouse input and command-prompt
 input.  Left-clicking anywhere on the canvas will drag the canvas.
@@ -69,12 +72,12 @@ to learn more information about a specific command.
 
 Try typing the following in the program's command prompt for the example
 graph:
-	hide Contour <= 7
-	format Contour == 3 blue
+    hide Contour <= 7
+    format Contour == 3 blue
 
 Here are some neat tricks:
-	hide Pruned >= 0; since nodes only get a "Pruned" property if they
-		have no children, this is a quick way to get rid of a lot of
-		extra "uninteresting" nodes in the tree
+    hide Pruned >= 0; since nodes only get a "Pruned" property if they
+        have no children, this is a quick way to get rid of a lot of
+        extra "uninteresting" nodes in the tree
 
 
