@@ -19,7 +19,9 @@
 #include "outputter.h"
 #include "types.h"
 
+#include <cassert>
 #include <string>
+#include <tuple>
 #include <map>
 
 class Command
@@ -31,14 +33,14 @@ public:
 	void setInputStr(const std::string& str) { mInputStr = str; }
 	std::string getInputStr() { return mInputStr; }
 	void setOutput(Outputter* output) { fpOutput = output; }
-	std::string help() const { return mHelpString; }
 
+	virtual std::string help() const = 0;
 	virtual bool operator()(tok_iter& token, const tok_iter& end) = 0;
 
 protected:
-	Command(const std::string& help) : mHelpString(help) { }
+	Command(const std::string& name, const std::string& help) : mCmdName(name) { }
 
-	const std::string mHelpString;
+	const std::string mCmdName;
 	std::string mInputStr;
 	Outputter* fpOutput;
 };

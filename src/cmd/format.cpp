@@ -11,20 +11,54 @@
 
 #include <graph.h>
 
+#include <tuple>
 #include <vector>
 #include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
 using namespace boost;
 
+class Match { };
+
+const CmdStructure<Match, double> radiusCmd({
+		{"match", "specify a group of nodes to modify"},
+		{"radius", "new radius value for matched nodes"}
+	});
+
+const CmdStructure<Match, double> thicknessCmd({
+		{"match", "specify a group of nodes to modify"},
+		{"thickness", "new border thickness value for matched nodes"}
+	});
+
+const CmdStructure<Match, Gdk::Color> colorCmd({
+		{"match", "specify a group of nodes to modify"},
+		{"color", "new outline color for matched nodes as a Gdk::Color string"}
+	});
+		 
+const CmdStructure<Match, Gdk::Color> fillColorCmd({
+		{"match", "specify a group of nodes to modify"},
+		{"color", "new fill color for matched nodes as a Gdk::Color string"}
+	});
+
 FormatCommand::FormatCommand() :
-	Command("format PropertyName Operator Value Color [Fill] [Radius] [Thickness]")
+	Command("format", "PropertyName Operator Value Color [Fill] [Radius] [Thickness]")
 {
 	/* Do nothing */
 }
 
+string FormatCommand::help() const
+{
+	string helpStr = mCmdName + " ";
+	for (int i = 0; i < colorStructure.help.size(); ++i)
+		helpStr += colorStructure.help[i].term + " ";
+	return helpStr;
+}
+
 bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 {
+	int x; string s;
+	colorStructure.parse("format", fpOutput, token, end, x, s);
+
 	// TOKEN: filter string
     if (token == end) { fpOutput->writeError("Too few arguments to format."); return false; }
     string filterBy = trim_copy(*token++);

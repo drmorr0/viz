@@ -29,6 +29,7 @@ add_executable(viz
 	"${VIZ_CODE_DIR}/main.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_mgr.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_hist.cpp"
+	"${VIZ_CODE_DIR}/cmd/cmd_parse.cpp"
 	"${VIZ_CODE_DIR}/cmd/format.cpp"
 	"${VIZ_CODE_DIR}/cmd/hide.cpp"
 	"${VIZ_CODE_DIR}/cmd/help.cpp"
