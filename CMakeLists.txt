@@ -27,6 +27,7 @@ include_directories(
 # Set the name of the executable output with source file dependencies
 add_executable(viz
 	"${VIZ_CODE_DIR}/main.cpp"
+	"${VIZ_CODE_DIR}/cmd/cmd.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_mgr.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_hist.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_parse.cpp"

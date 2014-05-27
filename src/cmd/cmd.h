@@ -24,6 +24,8 @@
 #include <tuple>
 #include <map>
 
+struct AbstractCmdStructure;
+
 class Command
 {
 public:
@@ -34,13 +36,17 @@ public:
 	std::string getInputStr() { return mInputStr; }
 	void setOutput(Outputter* output) { fpOutput = output; }
 
-	virtual std::string help() const = 0;
+	std::string help(tok_iter& token, const tok_iter& end) const;
 	virtual bool operator()(tok_iter& token, const tok_iter& end) = 0;
 
 protected:
-	Command(const std::string& name, const std::string& help) : mCmdName(name) { }
+	Command(const std::string& name, const std::string& desc, 
+			const std::map<std::string, const AbstractCmdStructure*>& subc) : 
+			mCmdName(name), mCmdDesc(desc), mSubCommands(subc) { }
 
 	const std::string mCmdName;
+	const std::string mCmdDesc;
+	const std::map<std::string, const AbstractCmdStructure*> mSubCommands;
 	std::string mInputStr;
 	Outputter* fpOutput;
 };

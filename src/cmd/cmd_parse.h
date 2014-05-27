@@ -10,8 +10,13 @@
 #include "types.h"
 #include "outputter.h"
 
-bool parseElement(tok_iter& token, const tok_iter& end, int& el);
+class Match;
+
+bool parseElement(tok_iter& token, const tok_iter& end, Match& el);
 bool parseElement(tok_iter& token, const tok_iter& end, std::string& el);
+bool parseElement(tok_iter& token, const tok_iter& end, double& el);
+bool parseElement(tok_iter& token, const tok_iter& end, int& el);
+bool parseElement(tok_iter& token, const tok_iter& end, Gdk::Color& el);
 
 class Outputter;
 
@@ -21,17 +26,25 @@ struct CmdHelp
 	std::string desc;
 };
 
-template <typename T, typename... Rest>
-struct CmdStructure
+struct AbstractCmdStructure
 {
-	CmdStructure(const std::vector<CmdHelp>& h) : help(h) 
-		{ assert(help.size() == sizeof...(Rest) + 1); }
-	const std::vector<CmdHelp> help;
+	AbstractCmdStructure(const std::vector<CmdHelp>& h) : helpParts(h) { } 
+	virtual ~AbstractCmdStructure() = 0;  // Can't create an AbstractCmdStructure
+	const std::vector<CmdHelp> helpParts;
+	std::string help() const; 
+};
+
+template <typename T, typename... Rest>
+struct CmdStructure : public AbstractCmdStructure
+{
+	CmdStructure(const std::vector<CmdHelp>& h) : AbstractCmdStructure(h) 
+		{ assert(helpParts.size() == sizeof...(Rest) + 1); }
+	~CmdStructure() { }
 	bool parse(std::string name, Outputter* out, tok_iter& token, const tok_iter& end,
 			T& el, Rest&... rest) const { return parseHelper(name, out, token, end, el, rest...); }
 };
 
-bool parseHelper(std::string cmdName, Outputter* out, tok_iter& token, const tok_iter& end) 
+inline bool parseHelper(std::string cmdName, Outputter* out, tok_iter& token, const tok_iter& end) 
 {
 	if (token != end) return false;
 	else return true;
@@ -46,5 +59,7 @@ bool parseHelper(std::string name, Outputter* out, tok_iter& token,
 	else if (!parseElement(token, end, el)) return false;
 	else return parseHelper(name, out, ++token, end, rest...);
 }
+
+
 
 #endif // CMD_PARSE_H

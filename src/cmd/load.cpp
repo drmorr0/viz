@@ -19,8 +19,18 @@
 using namespace std;
 using namespace boost;
 
+const CmdStructure<string> loadGraphCmd(
+		vector<CmdHelp>{{"filename", "specify a file from which to load a new graph"}}
+	);
+
+const CmdStructure<string> loadScriptCmd(
+		vector<CmdHelp>{{"filename", "specify a script file to execute"}}
+	);
+
 LoadCommand::LoadCommand() :
-	Command("load [script|graph] Filename")
+	Command("load", "Read in a new graph or script file",
+			{{"graph", &loadGraphCmd},
+			 {"script", &loadScriptCmd}})
 {
 	/* Do nothing */
 }
@@ -28,27 +38,28 @@ LoadCommand::LoadCommand() :
 bool LoadCommand::operator()(tok_iter& token, const tok_iter& end)
 {
     if (token == end) { fpOutput->writeError("Too few arguments to load."); return false; }
-    string subcommand = trim_copy(*token++);
+    string subc = trim_copy(*token++);
 
-	if (subcommand == "graph")
+	if (mSubCommands.count(subc) == 0)
 	{
-		if (token == end) 
-			{ fpOutput->writeError("Too few arguments to load script."); return false; }
-		string filename = trim_copy(*token++);
-		return loadGraph(filename);
-	}
-	else if (subcommand == "script")
-	{
-		if (token == end) 
-			{ fpOutput->writeError("Too few arguments to load script."); return false; }
-		string filename = trim_copy(*token++);
-		return loadScript(filename);
-	}
-	else 
-	{
-		fpOutput->writeError(string("Unrecognized subcommand to load: ") + subcommand);
+		fpOutput->writeError("Invalid subcommand " + subc);
 		return false;
 	}
+
+	string subcName = mCmdName + " " + subc;
+	string filename;
+	
+	if (subc == "graph")
+	{
+		loadGraphCmd.parse(subcName, fpOutput, token, end, filename);
+		return loadGraph(filename);
+	}
+	else if (subc == "script")
+	{
+		loadScriptCmd.parse(subcName, fpOutput, token, end, filename);
+		return loadScript(filename);
+	}
+	
     return true;
 }
 

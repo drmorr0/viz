@@ -74,6 +74,11 @@ void remove(ContainerT& con, const U& el)
 	if (iter != con.end()) con.erase(iter);
 }
 
+inline std::string operator+(const char* s1, const std::string& s2)
+{
+	return std::string(s1) + s2;
+}
+
 #endif // UTIL_H
 
 

@@ -23,10 +23,7 @@ public:
 	FormatCommand();
 	~FormatCommand() { }
 	Command* clone() const { return new FormatCommand(*this); }
-	std::string help() const;
 	bool operator()(tok_iter& token, const tok_iter& end);
-	bool operator()(const std::string& filterBy, MatchOp oper, double value, 
-		const Gdk::Color& color, const Gdk::Color& fill, double radius, double thickness);
 };
 
 #endif // FORMAT_H

@@ -30,8 +30,12 @@ public:
 
 	void showAll();
 	void hide(const std::vector<int>& toHide);
-	void format(const std::vector<int>& toFormat, const Gdk::Color& color, 
-			const Gdk::Color& fill, double radius, double thickness);
+
+	void setRadius(const std::vector<int>& toFormat, double radius);
+	void setThickness(const std::vector<int>& toFormat, double thickness);
+	void setColor(const std::vector<int>& toFormat, const Gdk::Color& color);
+	void setFill(const std::vector<int>& toFormat, const Gdk::Color& fill);
+
 	void render(const CairoContext& ctx, double scale);
 	void render(const CairoContext& ctx, double scale, const Vector2D& offset, 
 			bool renderSelected = false);

@@ -11,7 +11,7 @@
 class BadCommand : public Command
 {
 public:
-	BadCommand(const string& cmdStr) : Command("bad") { mInputStr = cmdStr; }
+	BadCommand(const string& cmdStr) : Command("bad", "bad", {{}}) { mInputStr = cmdStr; }
 	Command* clone() const { return new BadCommand(*this); }
 	bool operator()(tok_iter& token, const tok_iter& end) { return false; }
 };

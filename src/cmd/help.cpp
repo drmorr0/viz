@@ -11,7 +11,7 @@ using namespace std;
 using namespace boost;
 
 HelpCommand::HelpCommand(CommandManager* cmdMgr) :
-	Command("Display help mesage"),
+	Command("help", "Display help mesage", {{ /* No subcommands */ }}),
 	fpCmdMgr(cmdMgr)
 {
 	/* Do nothing */
@@ -30,7 +30,7 @@ bool HelpCommand::operator()(tok_iter& token, const tok_iter& end)
 	{
 		string cmdName = trim_copy(*token++);
 		auto cmd = fpCmdMgr->get(cmdName);
-		if (cmd) fpOutput->writeInfo(cmd->help());
+		if (cmd) fpOutput->writeInfo(cmd->help(token, end));
 		else fpOutput->writeError(string("Unknown command: ") + cmdName);
 	}
 
