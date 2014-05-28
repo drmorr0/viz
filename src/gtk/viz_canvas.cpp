@@ -76,16 +76,43 @@ void VizCanvas::hide(const vector<int>& toHide)
 	queue_draw();
 }
 
-void VizCanvas::format(const vector<int>& toFormat, const Gdk::Color& color, 
-		const Gdk::Color& fill, double radius, double thickness)
+void VizCanvas::setRadius(const vector<int>& toFormat, double radius)
+{
+	for (int i = 0; i < toFormat.size(); ++i)
+	{
+		VertexSceneObject* vertex = (VertexSceneObject*)pScene->get(toSceneID(toFormat[i]));
+		vertex->setRadius(radius);
+	}
+	queue_draw();
+}
+
+
+void VizCanvas::setThickness(const vector<int>& toFormat, double thickness)
+{
+	for (int i = 0; i < toFormat.size(); ++i)
+	{
+		VertexSceneObject* vertex = (VertexSceneObject*)pScene->get(toSceneID(toFormat[i]));
+		vertex->setThickness(thickness);
+	}
+	queue_draw();
+}
+
+void VizCanvas::setColor(const vector<int>& toFormat, const Gdk::Color& color)
 {
 	for (int i = 0; i < toFormat.size(); ++i)
 	{
 		VertexSceneObject* vertex = (VertexSceneObject*)pScene->get(toSceneID(toFormat[i]));
 		vertex->setColor(color);
-		if (fill != Gdk::Color("#deaded")) vertex->setFill(fill); // TODO Stupid hack
-		if (radius >= 0) vertex->setRadius(radius);
-		if (thickness >= 0) vertex->setThickness(thickness);
+	}
+	queue_draw();
+}
+
+void VizCanvas::setFill(const vector<int>& toFormat, const Gdk::Color& fill)
+{
+	for (int i = 0; i < toFormat.size(); ++i)
+	{
+		VertexSceneObject* vertex = (VertexSceneObject*)pScene->get(toSceneID(toFormat[i]));
+		vertex->setFill(fill);
 	}
 	queue_draw();
 }

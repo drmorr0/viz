@@ -19,8 +19,12 @@
 #include "outputter.h"
 #include "types.h"
 
+#include <cassert>
 #include <string>
+#include <tuple>
 #include <map>
+
+struct AbstractCmdStructure;
 
 class Command
 {
@@ -31,14 +35,18 @@ public:
 	void setInputStr(const std::string& str) { mInputStr = str; }
 	std::string getInputStr() { return mInputStr; }
 	void setOutput(Outputter* output) { fpOutput = output; }
-	std::string help() const { return mHelpString; }
 
+	std::string help(tok_iter& token, const tok_iter& end) const;
 	virtual bool operator()(tok_iter& token, const tok_iter& end) = 0;
 
 protected:
-	Command(const std::string& help) : mHelpString(help) { }
+	Command(const std::string& name, const std::string& desc, 
+			const std::map<std::string, const AbstractCmdStructure*>& subc) : 
+			mCmdName(name), mCmdDesc(desc), mSubCommands(subc) { }
 
-	const std::string mHelpString;
+	const std::string mCmdName;
+	const std::string mCmdDesc;
+	const std::map<std::string, const AbstractCmdStructure*> mSubCommands;
 	std::string mInputStr;
 	Outputter* fpOutput;
 };

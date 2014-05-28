@@ -7,7 +7,7 @@
 #include <gtkmm.h>
 
 QuitCommand::QuitCommand() :
-	Command("Quit Viz")
+	Command("quit", "Quit Viz", {{ /* No subcommands */ }})
 {
 	/* Do nothing */
 }

@@ -25,66 +25,35 @@ using Cairo::PdfSurface;
 using Cairo::SvgSurface;
 using Cairo::ImageSurface;
 
+const CmdStructure<string, int> saveCmd({
+		{"filename", "file to save to (type is determined by extension)"},
+		{"width", "width of saved file in pixels"}
+	});
+
 SaveCommand::SaveCommand() :
-	Command("save Filename [Format|width] [width]")
+	Command("save", "Save the graph along with its formatting to a file", 
+			{{ /* No subcommands TODO? */}})
 {
 	/* Do nothing */
 }
 
 bool SaveCommand::operator()(tok_iter& token, const tok_iter& end)
 {
-	// TOKEN: filename
-    if (token == end) { fpOutput->writeError("Too few arguments to save."); return false; }
-    string filename = trim_copy(*token++);
-
-	// TOKEN: format or width
-	string format = "";		
-	int width = -1;
-	if (token != end)
+	string filename; int width;
+	saveCmd.parse(mCmdName, fpOutput, token, end, filename, width);
+	
+	// If no format specified, try to guess the format from the file extension
+	// According to StackOverflow, this is not a scalable solution, but if it doesn't work
+	// that's ok because we have a fallback TODO
+	string format("ps");
+	size_t pos = filename.rfind('.');
+	if (pos != string::npos)
 	{
-		// Try to parse the specified format
-		string str = trim_copy(*token++);
-
-		// First check to see if its a number
-		try { width = stoi(str); if (width < 0) throw invalid_argument("width"); }
-		catch (invalid_argument& e)
-		{
-			// If it's not a number, interpret it as a format
-			format = str; algorithm::to_lower(format);
-			if (!isSupportedFormat(format)) 
-			{
-				fpOutput->writeError(string("Unsupported image format: ") + format);
-				return false;
-			}
-		}
+		string test = filename.substr(pos + 1);
+		if (!isSupportedFormat(test))
+			fpOutput->writeWarning("Could not identify image format: default to PostScript");
+		else format = test;
 	}
-	if (format == "")
-	{
-		// If no format specified, try to guess the format from the file extension
-		// According to StackOverflow, this is not a scalable solution, but if it doesn't work
-		// that's ok because we have a fallback.
-		size_t pos = filename.rfind('.');
-		if (pos != string::npos)
-		{
-			string test = filename.substr(pos + 1);
-			if (!isSupportedFormat(test))
-				fpOutput->writeWarning("Could not identify image format: default to PostScript");
-			else format = test;
-				
-		}
-	}
-	// TOKEN: width
-	if (token != end)
-	{
-		string wStr = trim_copy(*token++);
-		try { width = stoi(wStr); if (width < 0) throw invalid_argument("width"); }
-		catch (invalid_argument& e)
-			{ fpOutput->writeError(string("Invalid numeric value: ") + wStr); return false; }
-	}
-
-	// Extra tokens are ignored
-    if (token != end) 
-		fpOutput->writeWarning(string("Ignoring extra arguments to save: ") + *token + "...");
 
 	return saveGraph(filename, format, width);
 }

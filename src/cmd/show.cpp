@@ -14,7 +14,7 @@
 using namespace std;
 
 ShowCommand::ShowCommand() :
-	Command("Remove all filtering rules")
+	Command("show", "Remove all filtering rules", {{ /* No subcommands */ }})
 {
 	/* Do nothing */
 }

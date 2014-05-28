@@ -12,6 +12,7 @@
  */
 
 #include "cmd.h"
+#include "cmd_parse.h"
 
 class LoadCommand : public Command
 {

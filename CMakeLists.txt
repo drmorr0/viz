@@ -27,8 +27,10 @@ include_directories(
 # Set the name of the executable output with source file dependencies
 add_executable(viz
 	"${VIZ_CODE_DIR}/main.cpp"
+	"${VIZ_CODE_DIR}/cmd/cmd.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_mgr.cpp"
 	"${VIZ_CODE_DIR}/cmd/cmd_hist.cpp"
+	"${VIZ_CODE_DIR}/cmd/cmd_parse.cpp"
 	"${VIZ_CODE_DIR}/cmd/format.cpp"
 	"${VIZ_CODE_DIR}/cmd/hide.cpp"
 	"${VIZ_CODE_DIR}/cmd/help.cpp"
@@ -45,6 +47,7 @@ add_executable(viz
 	"${VIZ_CODE_DIR}/scene/edge_obj.cpp"
 	"${VIZ_CODE_DIR}/scene/vertex_obj.cpp"
 	"${VIZ_CODE_DIR}/util/builder.cpp"
+	"${VIZ_CODE_DIR}/util/match.cpp"
 	"${VIZ_CODE_DIR}/util/more_graph_utils.cpp"
 	"${VIZ_CODE_DIR}/util/vector2d.cpp"
 )

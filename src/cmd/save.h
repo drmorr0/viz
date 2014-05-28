@@ -11,6 +11,7 @@
  */
 
 #include "cmd.h"
+#include "cmd_parse.h"
 
 class SaveCommand : public Command
 {

@@ -8,6 +8,7 @@
  */
 
 #include "scene_obj.h"
+#include <string>
 
 // A scene object for vertices of a graph
 class VertexSceneObject : public SceneObject
@@ -43,6 +44,7 @@ private:
 	double mThickness;
 	Gdk::Color mColor;
 	Gdk::Color mFill;
+	std::string mLabel;
 };
 
 #endif // VERTEX_OBJ_H

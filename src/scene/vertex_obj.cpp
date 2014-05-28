@@ -21,7 +21,8 @@ VertexSceneObject::VertexSceneObject(const Vector2D& center, double radius, doub
 	mRadius(radius),
 	mThickness(thickness),
 	mColor(color),
-	mFill(fillColor)
+	mFill(fillColor),
+	mLabel("Hi!")
 {
 	/* Do nothing */
 }
@@ -54,6 +55,28 @@ void VertexSceneObject::render(const CairoContext& ctx, const Vector2D& canvOffs
 	ctx->set_source_rgb(mColor.get_red_p(), mColor.get_green_p(), mColor.get_blue_p());
 	ctx->set_line_width(mThickness);
 	ctx->stroke();
+
+	// Add a node label
+	if (!mLabel.empty())
+	{
+		Cairo::TextExtents textBounds; 
+
+		// I don't really know what the ToyFontFace does, but this says to use the default system
+		// font with normal slant and weight
+		Cairo::RefPtr<Cairo::ToyFontFace> font =
+			Cairo::ToyFontFace::create("", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
+
+		// We need to figure out the bounding box for the text so we can center it in the node
+		ctx->set_font_face(font);
+		ctx->set_font_size(canvRadius);
+		ctx->get_text_extents(mLabel, textBounds);
+
+		// Move to the center of the node and add the label
+		ctx->move_to(canvPos.x - (textBounds.width / 2), canvPos.y + (textBounds.height / 2));
+		ctx->show_text(mLabel);
+		ctx->begin_new_path();
+	}
+
 	ctx->restore();
 }
 

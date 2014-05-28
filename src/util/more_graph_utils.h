@@ -5,6 +5,7 @@
  */
 
 #include "types.h"
+#include "match.h"
 #include <graph_layout.h>
 
 #include <vector>
@@ -14,6 +15,7 @@ namespace graph
 {
 	class Graph;
 
-	std::vector<int> match(const Graph& g, const std::string& filterText, MatchOp op, double value);
+	std::vector<int> match(const Graph& g, const std::string& filterText, Match::Operator op, 
+			double value);
 	GraphLayout improvedLayoutTreeLevel(const Graph&, int radius, int hSpace, int vSpace);
 };
