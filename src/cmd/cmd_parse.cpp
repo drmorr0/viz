@@ -7,38 +7,63 @@
 #include <string>
 
 using namespace std;
+using namespace boost;
 
-bool parseElement(tok_iter& token, const tok_iter& end, Match& el)
+// Match a set of vertices
+bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, Match& el)
 {
 	return true;
 }
 
-bool parseElement(tok_iter& token, const tok_iter& end, string& el)
+// Parse a string element
+bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, string& el)
 {
-	el = "asdf";
+	el = trim_copy(*token);
 	return true;
 }
 
-bool parseElement(tok_iter& token, const tok_iter& end, double& el)
+// Parse numeric elements
+bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, double& el)
 {
-	el = 1.0;
+	string valStr = trim_copy(*token);
+	try { el = stod(valStr); }
+	catch (invalid_argument& e)
+	{
+		out->writeError("Invalid numeric value: " + valStr);
+		return false;
+	}
 	return true;
 }
 
-bool parseElement(tok_iter& token, const tok_iter& end, int& el)
+bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, int& el)
 {
-	el = 1;
+	string valStr = trim_copy(*token);
+	try { el = stoi(valStr); }
+	catch (invalid_argument& e)
+	{
+		out->writeError("Invalid numeric value: " + valStr);
+		return false;
+	}
 	return true;
 }
 
-bool parseElement(tok_iter& token, const tok_iter& end, Gdk::Color& el)
+// Parse a color element
+bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, Gdk::Color& el)
 {
-	el = Gdk::Color("#ffffff");
+	string colorStr = trim_copy(*token);
+	if (!el.set(colorStr))
+	{
+		out->writeError("Invalid color specification: " + colorStr);
+		return false;
+	}
 	return true;
 }
 
+// Still need to implement destructor even though it's virtual
 AbstractCmdStructure::~AbstractCmdStructure() { }
 
+// Print out help on the particular command (list each element in order, then provide details for
+// each of the different parameters)
 string AbstractCmdStructure::help() const
 {
 	string helpString;

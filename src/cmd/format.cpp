@@ -1,6 +1,4 @@
-/*
- * David R. Morrison, March 2014
- */
+// format.cpp: David R. Morrison, March 2014
 
 #include "format.h"
 #include "viz_tab.h"
@@ -18,6 +16,7 @@
 using namespace std;
 using namespace boost;
 
+// Accepted subcommands for format are: radius, thickness, color, and fill
 const CmdStructure<Match, double> radiusCmd({
 		{"match", "specify a group of nodes to modify"},
 		{"radius", "new radius value for matched nodes"}

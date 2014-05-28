@@ -9,9 +9,13 @@
 using namespace std;
 using namespace boost;
 
+// Output the help string for a given command
 string Command::help(tok_iter& token, const tok_iter& end) const
 {
 	string helpStr;
+
+	// If we didn't ask for help on a subcommand, then just print out the command name, its
+	// description, and the list of accepted subcommands (if any are present)
 	if (token == end)
 	{
 		helpStr += mCmdName + ": " + mCmdDesc;
@@ -22,6 +26,8 @@ string Command::help(tok_iter& token, const tok_iter& end) const
 				helpStr += i->first + " ";
 		}
 	}
+
+	// Otherwise, provide help on the specified subcommand, if it's valid
 	else
 	{
 		string subc = trim_copy(*token++);
