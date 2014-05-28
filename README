@@ -16,6 +16,7 @@ you think it should, the best thing to do is send me a note.
 
 Requirements
 ------------
+ * boost C++ libraries (annoying but useful)
  * cmake (for generating the build process)
  * gtkmm-3.0 (and all dev files)
  * cairomm-3.0 (and all dev files)
@@ -37,7 +38,7 @@ not work.
 To compile this source code on Linux:
 
 0) Edit the CMakeLists.txt file in the root directory:
-	- Change the location of the GRAPHLIB_DIR variable on line 57
+	- Change the location of the GRAPHLIB_DIR variable on line 60
 	  to match the location in which you have installed it (if you
 	  are running the debug version of this code, you will need to
 	  install the debug version of graphlib as well).
@@ -62,9 +63,9 @@ For example, try running
 Viz has two different modes of input, mouse input and command-prompt
 input.  Left-clicking anywhere on the canvas will drag the canvas.
 Left-click and drag to move nodes of the graph, or shift+left-click to
-drag the subtree rooted at a node.  The mouse wheel will zoom in and
-out.  You can click on a node without dragging to get specific
-information about that node.
+select a grouping of nodes.  The mouse wheel will zoom in and out.  
+You can click on a node without dragging to get specific information 
+about that node.
 
 The command prompt understands a number of different commands.  Type
 'help' to see a list of supported commands, and type 'help <command>' 
@@ -73,7 +74,7 @@ to learn more information about a specific command.
 Try typing the following in the program's command prompt for the example
 graph:
 	hide Contour <= 7
-	format Contour == 3 blue
+	format color Contour == 3 blue
 
 Here are some neat tricks:
 	hide Pruned >= 0; since nodes only get a "Pruned" property if they

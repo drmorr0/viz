@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(VIZ)
 set(VIZ_VERSION_MAJOR 0)
-set(VIZ_VERSION_MINOR 1)
+set(VIZ_VERSION_MINOR 2)
 
 # Output in the root directory -- need to adjust location of layout files in src/util/builder.h
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${VIZ_SOURCE_DIR})
