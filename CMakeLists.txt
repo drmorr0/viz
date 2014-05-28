@@ -47,6 +47,7 @@ add_executable(viz
 	"${VIZ_CODE_DIR}/scene/edge_obj.cpp"
 	"${VIZ_CODE_DIR}/scene/vertex_obj.cpp"
 	"${VIZ_CODE_DIR}/util/builder.cpp"
+	"${VIZ_CODE_DIR}/util/match.cpp"
 	"${VIZ_CODE_DIR}/util/more_graph_utils.cpp"
 	"${VIZ_CODE_DIR}/util/vector2d.cpp"
 )

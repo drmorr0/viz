@@ -31,7 +31,7 @@ HideCommand::HideCommand() :
 
 bool HideCommand::operator()(tok_iter& token, const tok_iter& end)
 {
-	Match match;
+	Match match(*TheBuilder::getCurrentTab()->graph());
 	if (hideCmd.parse(mCmdName, fpOutput, token, end, match))
 		TheBuilder::getCurrentTab()->canvas()->hide(match.verts());
 	else return false;

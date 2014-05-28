@@ -60,7 +60,7 @@ bool FormatCommand::operator()(tok_iter& token, const tok_iter& end)
 	}
 
 	string subcName = mCmdName + " " + subc;
-	Match match;
+	Match match(*TheBuilder::getCurrentTab()->graph());
 
 	if (subc == "radius")
 	{

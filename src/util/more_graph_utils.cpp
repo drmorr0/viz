@@ -15,7 +15,7 @@ namespace graph
  * Loop through all vertices of the specified graph and return a list of the ones that match
  * the specified rule.  I'm not exactly sure how efficient this is going to be for large graphs...
  */
-vector<int> match(const Graph& g, const string& filterText, MatchOp op, double value)
+vector<int> match(const Graph& g, const string& filterText, Match::Operator op, double value)
 {
 	vector<int> matched;
 	for (auto v = g.begin(); v != g.end(); ++v)
@@ -33,12 +33,12 @@ vector<int> match(const Graph& g, const string& filterText, MatchOp op, double v
 				try { propVal = stod(prop->second); } catch (invalid_argument& e) { continue; }
 
 				// How to handle non-numeric properties? TODO
-				if ((op == Less 	 && propVal <  value) ||
-					(op == LessEq	 && propVal <= value) ||
-					(op == Eq		 && propVal == value) ||
-					(op == NotEq	 && propVal != value) ||
-					(op == GreaterEq && propVal >= value) ||
-					(op == Greater	 && propVal >  value))
+				if ((op == Match::Less 	 	&& propVal <  value) ||
+					(op == Match::LessEq	&& propVal <= value) ||
+					(op == Match::Eq		&& propVal == value) ||
+					(op == Match::NotEq	 	&& propVal != value) ||
+					(op == Match::GreaterEq && propVal >= value) ||
+					(op == Match::Greater	&& propVal >  value))
 					matched.push_back(v->first);
 			}
 		}

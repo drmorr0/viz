@@ -12,6 +12,29 @@ using namespace boost;
 // Match a set of vertices
 bool parseElement(tok_iter& token, const tok_iter& end, Outputter* out, Match& el)
 {
+	string filterStr = trim_copy(*token++);
+	if (token == end) { out->writeError("Truncated match specification"); return false; }
+	string operStr = trim_copy(*token++);
+	if (token == end) { out->writeError("Truncated match specification"); return false; }
+	
+	// Don't increment the last time -- the main loop takes care of this
+	string valStr = trim_copy(*token);	
+
+	if (!el.setFilter(filterStr))
+	{
+		out->writeError("Invalid filter specification: " + filterStr);
+		return false;
+	}
+	if (!el.setOperator(operStr))
+	{
+		out->writeError("Invalid match operator: " + operStr);
+		return false;
+	}
+	if (!el.setValue(valStr))
+	{
+		out->writeError("Invalid match value: " + valStr);
+		return false;
+	}
 	return true;
 }
 
